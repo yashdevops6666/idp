@@ -4,17 +4,34 @@ import { env } from "../config/env.js";
 import { digest } from "../grounding/buildDigest.js";
 import { attachSessionKey } from "../middleware/auth.js";
 import { chatDailyLimiter, chatMinuteLimiter } from "../middleware/rateLimit.js";
-import type { ChatMessage, ChatRequest } from "../types.js";
+import type { ChatMessage, ChatMode, ChatRequest } from "../types.js";
 
 export const chatRouter = Router();
 
-const SYSTEM_PROMPT = `You are the Platform Copilot for this Internal Developer Platform (IDP) demo. You help developers with questions about the golden path: the self-service scaffolder, the reusable CI/CD workflows, the Terraform baseline module, and the branch/environment protection policies.
+const PLATFORM_SYSTEM_PROMPT = `You are the Platform Copilot for this Internal Developer Platform (IDP) demo. You help developers with questions about the golden path: the self-service scaffolder, the reusable CI/CD workflows, the Terraform baseline module, and the branch/environment protection policies.
 
 Ground every answer in the actual repository content provided below (delimited by "### FILE: <path>" markers) rather than general knowledge about DevOps or Terraform. When a question is about "why" something is configured a certain way, cite the specific file and value (e.g. "policy/environment-prod.json requires 2 reviewer teams and a 5 minute wait_timer"). If something isn't covered by the provided files, say so plainly rather than guessing.
 
 Keep answers concise and practical — this is a sidebar assistant, not a long-form document. Use short paragraphs or a few bullet points, not headers.
 
 Repository content follows:`;
+
+const CHAT_MODES: ChatMode[] = ["platform", "general"];
+
+// "platform" gets the repo digest as a cached system block; "general" gets
+// no system prompt at all — plain Claude, same as talking to the model
+// directly, not narrowed to this repo. Same model and same rate limits
+// either way, since both run on the same API key.
+function buildSystemParam(mode: ChatMode) {
+  if (mode === "general") return undefined;
+  return [
+    {
+      type: "text" as const,
+      text: `${PLATFORM_SYSTEM_PROMPT}\n\n${digest.text}`,
+      cache_control: { type: "ephemeral" as const },
+    },
+  ];
+}
 
 const MAX_MESSAGE_LENGTH = 4000;
 const MAX_HISTORY_LENGTH = 8;
@@ -45,6 +62,7 @@ chatRouter.post(
     const body = req.body as Partial<ChatRequest> | undefined;
     const message = body?.message;
     const history = body?.history ?? [];
+    const mode = body?.mode;
 
     if (typeof message !== "string" || message.trim().length === 0 || message.length > MAX_MESSAGE_LENGTH) {
       res.status(400).json({ error: "Invalid message." });
@@ -52,6 +70,10 @@ chatRouter.post(
     }
     if (!isValidHistory(history)) {
       res.status(400).json({ error: "Invalid conversation history." });
+      return;
+    }
+    if (!mode || !CHAT_MODES.includes(mode)) {
+      res.status(400).json({ error: "Invalid mode." });
       return;
     }
 
@@ -74,13 +96,7 @@ chatRouter.post(
       const stream = anthropic.messages.stream({
         model: env.chatModel,
         max_tokens: env.chatMaxTokens,
-        system: [
-          {
-            type: "text",
-            text: `${SYSTEM_PROMPT}\n\n${digest.text}`,
-            cache_control: { type: "ephemeral" },
-          },
-        ],
+        system: buildSystemParam(mode),
         messages: [
           ...history.map((m) => ({ role: m.role, content: m.content })),
           { role: "user" as const, content: message },

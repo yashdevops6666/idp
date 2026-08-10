@@ -69,7 +69,14 @@ export interface ChatMessage {
   ts: number;
 }
 
+// "platform" grounds every answer in this repo's own files and declines
+// what isn't covered. "general" is plain Claude — no repo grounding, same
+// underlying model and the same cost/rate limits since it's still the same
+// API key.
+export type ChatMode = "platform" | "general";
+
 export interface ChatRequest {
   message: string;
   history: ChatMessage[];
+  mode: ChatMode;
 }

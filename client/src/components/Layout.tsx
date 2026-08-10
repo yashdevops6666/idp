@@ -2,10 +2,15 @@ import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { api } from "../lib/api";
 import { ChatPanel } from "./ChatPanel";
+import type { ChatMode } from "../types";
 import styles from "./Layout.module.css";
 
 export function Layout() {
-  const [chatOpen, setChatOpen] = useState(false);
+  const [openMode, setOpenMode] = useState<ChatMode | null>(null);
+
+  function toggle(mode: ChatMode) {
+    setOpenMode((current) => (current === mode ? null : mode));
+  }
 
   return (
     <div className={styles.shell}>
@@ -36,13 +41,25 @@ export function Layout() {
 
       <button
         className={styles.fab}
-        onClick={() => setChatOpen((v) => !v)}
-        aria-label="Toggle platform copilot"
+        onClick={() => toggle("platform")}
+        aria-pressed={openMode === "platform"}
+        aria-label="Toggle Platform Copilot (grounded in this repo)"
+        title="Platform Copilot — grounded in this repo"
       >
-        {chatOpen ? "×" : "Ask"}
+        {openMode === "platform" ? "×" : "Ask"}
       </button>
 
-      {chatOpen && <ChatPanel onClose={() => setChatOpen(false)} />}
+      <button
+        className={`${styles.fab} ${styles.fabGeneral}`}
+        onClick={() => toggle("general")}
+        aria-pressed={openMode === "general"}
+        aria-label="Toggle general Claude assistant"
+        title="Claude — general assistant, not limited to this repo"
+      >
+        {openMode === "general" ? "×" : "AI"}
+      </button>
+
+      {openMode && <ChatPanel mode={openMode} onClose={() => setOpenMode(null)} />}
     </div>
   );
 }

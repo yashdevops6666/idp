@@ -1,5 +1,6 @@
 import type {
   ChatMessage,
+  ChatMode,
   Guardrail,
   GoldenPathStop,
   Metric,
@@ -53,13 +54,14 @@ export const api = {
   async chatStream(
     message: string,
     history: ChatMessage[],
+    mode: ChatMode,
     onDelta: (text: string) => void,
     signal?: AbortSignal,
   ): Promise<void> {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, history }),
+      body: JSON.stringify({ message, history, mode }),
       signal,
     });
 

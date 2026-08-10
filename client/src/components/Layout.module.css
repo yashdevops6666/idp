@@ -77,3 +77,8 @@
 .fab:hover {
   filter: brightness(1.08);
 }
+
+.fabGeneral {
+  right: 92px;
+  background: var(--teal);
+}

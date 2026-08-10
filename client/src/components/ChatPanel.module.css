@@ -6,12 +6,20 @@
   height: min(560px, calc(100vh - 140px));
   background: var(--raised);
   border: 1px solid var(--line);
+  border-top: 3px solid var(--brass);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
   z-index: 20;
   overflow: hidden;
+}
+
+.generalAccent {
+  border-top-color: var(--teal);
+}
+.generalAccent .userBubble {
+  background: var(--teal);
 }
 
 .header {
