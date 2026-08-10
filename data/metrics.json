@@ -1,0 +1,6 @@
+[
+  { "value": "3m 48s", "label": "Time to first deploy", "note": "From request to a green run in dev. Was 9 days when it went through a ticket queue." },
+  { "value": "78%", "label": "Services on the path", "note": "Share of active services consuming the reusable workflows rather than a fork." },
+  { "value": "−64%", "label": "Platform tickets", "note": "Requests that used to need a platform engineer and now do not." },
+  { "value": "0", "label": "Stored cloud credentials", "note": "Workload identity federation everywhere. Nothing to rotate, nothing to leak." }
+]

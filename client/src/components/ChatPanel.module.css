@@ -1,0 +1,125 @@
+.panel {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  width: min(380px, calc(100vw - 32px));
+  height: min(560px, calc(100vh - 140px));
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  z-index: 20;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 11.5px;
+  margin-top: 3px;
+}
+
+.close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.close:hover {
+  color: var(--paper);
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.userBubble {
+  align-self: flex-end;
+  background: var(--brass);
+  color: var(--base);
+  padding: 8px 12px;
+  border-radius: 10px 10px 2px 10px;
+  font-size: 13.5px;
+  max-width: 85%;
+  white-space: pre-wrap;
+}
+
+.assistantBubble {
+  align-self: flex-start;
+  background: var(--base);
+  border: 1px solid var(--line);
+  padding: 8px 12px;
+  border-radius: 10px 10px 10px 2px;
+  font-size: 13.5px;
+  max-width: 90%;
+  white-space: pre-wrap;
+  min-height: 1.4em;
+}
+
+.error {
+  color: var(--alert);
+  font-size: 12.5px;
+}
+
+.inputRow {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.input {
+  flex: 1;
+  background: var(--base);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--paper);
+  padding: 9px 11px;
+  font-size: 13.5px;
+}
+.input:focus {
+  border-color: var(--brass);
+}
+
+.send {
+  background: var(--teal);
+  color: var(--base);
+  border: none;
+  border-radius: 4px;
+  padding: 0 14px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+.send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

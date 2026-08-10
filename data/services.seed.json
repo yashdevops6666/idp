@@ -1,0 +1,78 @@
+[
+  {
+    "id": "pricing-feed",
+    "name": "pricing-feed",
+    "owner": "Market Data",
+    "system": "Pricing & Market Data",
+    "status": "golden-path",
+    "lastDeploy": "2h ago",
+    "runtime": "python",
+    "lifecycle": "production",
+    "costCentre": "MD-1042",
+    "createdVia": "seed",
+    "repoUrl": "https://github.com/example-platform/pricing-feed"
+  },
+  {
+    "id": "nav-recon",
+    "name": "nav-recon",
+    "owner": "Fund Ops Engineering",
+    "system": "Fund Accounting",
+    "status": "golden-path",
+    "lastDeploy": "Yesterday",
+    "runtime": "python",
+    "lifecycle": "production",
+    "costCentre": "FA-2210",
+    "createdVia": "seed",
+    "repoUrl": "https://github.com/example-platform/nav-recon"
+  },
+  {
+    "id": "position-sync",
+    "name": "position-sync",
+    "owner": "Investment Engineering",
+    "system": "Portfolio Systems",
+    "status": "migrating",
+    "lastDeploy": "4d ago",
+    "runtime": "dotnet",
+    "lifecycle": "production",
+    "costCentre": "INV-3305",
+    "createdVia": "seed",
+    "repoUrl": "https://github.com/example-platform/position-sync"
+  },
+  {
+    "id": "client-reporting-api",
+    "name": "client-reporting-api",
+    "owner": "Distribution Engineering",
+    "system": "Client Platform",
+    "status": "golden-path",
+    "lastDeploy": "6h ago",
+    "runtime": "node",
+    "lifecycle": "production",
+    "costCentre": "DIST-4471",
+    "createdVia": "seed",
+    "repoUrl": "https://github.com/example-platform/client-reporting-api"
+  },
+  {
+    "id": "risk-limits-batch",
+    "name": "risk-limits-batch",
+    "owner": "Risk Engineering",
+    "system": "Risk & Compliance",
+    "status": "migrating",
+    "lastDeploy": "2d ago",
+    "runtime": "python",
+    "lifecycle": "production",
+    "costCentre": "RISK-5108",
+    "createdVia": "seed",
+    "repoUrl": "https://github.com/example-platform/risk-limits-batch"
+  },
+  {
+    "id": "legacy-fx-loader",
+    "name": "legacy-fx-loader",
+    "owner": "— unassigned",
+    "system": "Unknown",
+    "status": "off-path",
+    "lastDeploy": "311d ago",
+    "runtime": "python",
+    "lifecycle": "deprecated",
+    "createdVia": "seed"
+  }
+]

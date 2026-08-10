@@ -1,0 +1,123 @@
+/* Ported verbatim from the original static portal/index.html so the new
+   app carries forward the same dark "editorial/terminal" design language. */
+
+:root {
+  --base: #141f2e;
+  --raised: #1c2b3d;
+  --line: #2c3f55;
+  --paper: #dee7ef;
+  --muted: #7f94ab;
+  --brass: #d9a441;
+  --teal: #4fb3a5;
+  --alert: #e0685c;
+
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --gut: clamp(20px, 5vw, 64px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--base);
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--teal);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--gut);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass);
+  display: block;
+}
+
+.section {
+  padding: clamp(52px, 7vw, 88px) 0;
+  border-bottom: 1px solid var(--line);
+}
+.section h2 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(24px, 3.4vw, 38px);
+  letter-spacing: -0.025em;
+  margin: 14px 0 0;
+}
+.section .lede {
+  color: var(--muted);
+  max-width: 60ch;
+  margin-top: 14px;
+}
+
+.pill {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.pill.ok {
+  color: var(--teal);
+  border-color: rgba(79, 179, 165, 0.4);
+  background: rgba(79, 179, 165, 0.08);
+}
+.pill.warn {
+  color: var(--brass);
+  border-color: rgba(217, 164, 65, 0.4);
+  background: rgba(217, 164, 65, 0.08);
+}
+.pill.off {
+  color: var(--alert);
+  border-color: rgba(224, 104, 92, 0.4);
+  background: rgba(224, 104, 92, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

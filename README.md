@@ -64,6 +64,44 @@ open portal/index.html
 The scaffolder validates before it acts. A half-created service is worse than
 no service — it looks provisioned but nothing owns it.
 
+## The web app
+
+Beyond the static artefacts above, `client/` and `server/` are a full
+Node/Express + React implementation of the same story: a data-driven portal,
+a working (simulated) scaffolder wizard, and a **Platform Copilot** chatbot
+grounded in this repo's own Terraform, CI/CD, and policy files via the
+Anthropic API.
+
+**Local development**
+
+```bash
+npm install
+cp .env.example server/.env   # fill in ANTHROPIC_API_KEY, SITE_PASSWORD, COOKIE_SECRET
+npm run dev                   # server on :4000, client on :5173 (proxies /api)
+```
+
+**Production build** (what Railway runs)
+
+```bash
+npm run build   # builds client (Vite) then server (tsc)
+npm start        # single Node process: /api/* + the built client, on $PORT
+```
+
+**Required environment variables** (see `.env.example`): `ANTHROPIC_API_KEY`,
+`SITE_PASSWORD`, `COOKIE_SECRET`, `CHAT_MODEL`, `CHAT_MAX_TOKENS`. Set these
+in Railway's project settings before the first deploy — the server fails
+fast at startup if any are missing.
+
+**What's real and what's simulated.** The catalogue, metrics, guardrails and
+golden-path data are served from `data/*.json` and are illustrative, not
+live telemetry. The "New service" wizard and `scripts/new-service.sh
+--dry-run` both walk through the *exact* same steps a real provisioning run
+would take — reading the real `policy/*.json` and `templates/` files — but
+neither one ever calls `gh` or `az` against a real GitHub org or Azure
+subscription. The chatbot is a real, live call to the Anthropic API,
+grounded in this repo's own files, rate-limited per session since it runs
+on a personal API key shared across a testing team.
+
 ## Design decisions worth arguing about
 
 **Reusable workflows, not templates that get copied.** A copied pipeline is a

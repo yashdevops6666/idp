@@ -1,0 +1,88 @@
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 34px;
+  flex-wrap: wrap;
+}
+.filter {
+  flex: 1;
+  min-width: 220px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--paper);
+  padding: 9px 12px;
+  font-size: 13.5px;
+}
+.filter:focus {
+  border-color: var(--brass);
+}
+.sort {
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--paper);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: var(--mono);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 18px;
+  font-size: 14px;
+}
+.table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 14px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.table td {
+  padding: 14px;
+  border-bottom: 1px solid rgba(44, 63, 85, 0.5);
+  vertical-align: middle;
+}
+.svc {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--paper);
+}
+.svc a {
+  color: inherit;
+  text-decoration: none;
+}
+.svc a:hover {
+  color: var(--teal);
+}
+.team {
+  color: var(--muted);
+}
+.emptyRow {
+  color: var(--muted);
+  padding: 24px 14px;
+  text-align: center;
+}
+
+@media (max-width: 880px) {
+  .table thead {
+    display: none;
+  }
+  .table td {
+    display: block;
+    border: none;
+    padding: 3px 0;
+  }
+  .table tr {
+    display: block;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+}

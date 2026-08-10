@@ -1,0 +1,8 @@
+[
+  { "title": "Branch protection is applied, not requested", "body": "Linear history, code owner review and required checks are set by the scaffolder at creation. There is no window in which a new repo is unprotected." },
+  { "title": "Production needs two approvals", "body": "Environment protection rules live in GitHub, so the gate holds regardless of what a workflow file says. Dev applies straight through." },
+  { "title": "The reviewed plan is the applied plan", "body": "Terraform plans are posted to the pull request and the same artefact is applied on merge, so what was approved and what ran are the same thing." },
+  { "title": "Tags are set by the platform", "body": "Owner, cost centre and source repo are written by the baseline module. Showback reporting and the CMDB both key off them, so they are not left to memory." },
+  { "title": "Internal ingress by default", "body": "Public exposure is an explicit variable a reviewer can see in the diff, rather than something inherited from a copied config." },
+  { "title": "Off-path services stay visible", "body": "Nothing is blocked from leaving the path. It just shows up in the catalogue with its owner next to it, which turns out to be enough." }
+]

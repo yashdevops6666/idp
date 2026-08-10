@@ -1,0 +1,22 @@
+{
+  "name": "idp-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Internal Developer Platform — portal, self-service scaffolding, and a repo-grounded platform copilot.",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm:dev -w server\" \"npm:dev -w client\"",
+    "build": "npm run build -w client && npm run build -w server",
+    "start": "node server/dist/index.js",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

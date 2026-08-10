@@ -1,0 +1,8 @@
+[
+  { "id": "scaffold", "order": 0, "name": "Scaffold", "what": "Repo from template, team access, catalogue entry", "t": "0:00" },
+  { "id": "build", "order": 1, "name": "Build", "what": "Dependency cache, tests, coverage published", "t": "1:12" },
+  { "id": "scan", "order": 2, "name": "Scan", "what": "CodeQL, secret scanning, CVE gate at high", "t": "2:05" },
+  { "id": "provision", "order": 3, "name": "Provision", "what": "Terraform plan on the PR, apply on merge", "t": "3:04" },
+  { "id": "deploy", "order": 4, "name": "Deploy", "what": "Signed image, workload identity, no secrets", "t": "3:41" },
+  { "id": "observe", "order": 5, "name": "Observe", "what": "Logs, probes and a baseline alert already on", "t": "3:48" }
+]
