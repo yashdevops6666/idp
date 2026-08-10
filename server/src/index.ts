@@ -24,7 +24,10 @@ const app = express();
 // (used by the rate limiters and the chat daily-cap fallback key).
 app.set("trust proxy", 1);
 
-app.use(express.json({ limit: "32kb" }));
+// 128kb comfortably covers a full 8-message chat history at the chat
+// route's per-message cap (which itself scales with CHAT_MAX_TOKENS) plus
+// JSON escaping overhead; every other route's payloads are tiny by comparison.
+app.use(express.json({ limit: "128kb" }));
 app.use(
   cookieSession({
     name: "idp_session",

@@ -18,7 +18,12 @@ Repository content follows:`;
 
 const MAX_MESSAGE_LENGTH = 4000;
 const MAX_HISTORY_LENGTH = 8;
-const MAX_HISTORY_MESSAGE_LENGTH = 2000;
+// A prior assistant reply can legitimately be as long as env.chatMaxTokens
+// allows (up to ~4-5 chars/token for English/markdown/code). This must stay
+// generous relative to that budget — a cap smaller than what the model is
+// actually allowed to generate causes ordinary long answers to make the
+// *next* request fail history validation outright.
+const MAX_HISTORY_MESSAGE_LENGTH = env.chatMaxTokens * 8;
 
 function isValidHistory(history: unknown): history is ChatMessage[] {
   if (!Array.isArray(history) || history.length > MAX_HISTORY_LENGTH) return false;
