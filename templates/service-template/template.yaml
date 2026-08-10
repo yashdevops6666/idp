@@ -1,0 +1,119 @@
+# Backstage scaffolder template.
+#
+# This is the same journey as scripts/new-service.sh, exposed as a form
+# for people who would rather not use a terminal. Both call the same
+# guardrails, so the portal and the CLI cannot drift apart.
+
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: golden-path-service
+  title: New service
+  description: >-
+    A private repo, a green pipeline, a dev environment and a catalogue
+    entry. Roughly four minutes, no tickets.
+  tags:
+    - recommended
+    - python
+    - azure
+spec:
+  owner: group:platform-engineering
+  type: service
+
+  parameters:
+    - title: What are you building?
+      required: [service_name, description]
+      properties:
+        service_name:
+          title: Service name
+          type: string
+          description: Lowercase, hyphenated. This becomes the repo and resource names, and it is hard to change later.
+          pattern: '^[a-z][a-z0-9-]{2,29}$'
+          ui:autofocus: true
+        description:
+          title: What does it do?
+          type: string
+          description: One line. Whoever finds this at 3am should know what breaks if it stops.
+        runtime:
+          title: Runtime
+          type: string
+          default: python
+          enum: [python, dotnet, node]
+
+    - title: Who owns it?
+      required: [owner, system, cost_centre]
+      properties:
+        owner:
+          title: Owning team
+          type: string
+          description: The team that gets paged.
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+        system:
+          title: System
+          type: string
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: System
+        cost_centre:
+          title: Cost centre
+          type: string
+          description: Used for FinOps showback. Ask your delivery lead if you are not sure.
+        lifecycle:
+          title: Lifecycle
+          type: string
+          default: experimental
+          enum: [experimental, production, deprecated]
+
+  steps:
+    - id: fetch
+      name: Create the repository contents
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          service_name: ${{ parameters.service_name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          cost_centre: ${{ parameters.cost_centre }}
+          lifecycle: ${{ parameters.lifecycle }}
+          runtime: ${{ parameters.runtime }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: github.com?owner=jhi-platform&repo=${{ parameters.service_name }}
+        description: ${{ parameters.description }}
+        repoVisibility: private
+        defaultBranch: main
+        requireCodeOwnerReviews: true
+        requiredApprovingReviewCount: 1
+        deleteBranchOnMerge: true
+        protectDefaultBranch: true
+        access: jhi-platform/${{ parameters.owner }}
+
+    - id: register
+      name: Register in the catalogue
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Open repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: View in catalogue
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
+    text:
+      - title: Next step
+        content: |
+          Your first pipeline run has already started. Deploys to dev are
+          automatic on merge to main. Promotion to uat and prod needs an
+          approval from ${{ parameters.owner }}.

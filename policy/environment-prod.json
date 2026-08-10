@@ -1,0 +1,8 @@
+{
+  "wait_timer": 5,
+  "reviewers": [
+    { "type": "Team", "id": "$OWNING_TEAM_ID" },
+    { "type": "Team", "id": "$RELEASE_MANAGEMENT_TEAM_ID" }
+  ],
+  "deployment_branch_policy": { "protected_branches": true, "custom_branch_policies": false }
+}

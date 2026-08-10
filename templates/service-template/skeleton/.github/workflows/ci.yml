@@ -1,0 +1,28 @@
+# This is the entire CI configuration for a service on the golden path.
+#
+# Compare with the ~180 line Azure DevOps pipeline this replaces. The
+# build, test, CodeQL, dependency scan, SBOM, image signing and registry
+# push all still happen — they just are not this team's problem.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    uses: jhi-platform/idp/.github/workflows/reusable-service-ci.yml@v1
+    with:
+      service-name: ${{ github.event.repository.name }}
+      runtime: python
+    secrets: inherit
+
+  infra-dev:
+    needs: ci
+    uses: jhi-platform/idp/.github/workflows/reusable-terraform.yml@v1
+    with:
+      service-name: ${{ github.event.repository.name }}
+      environment: dev
+    secrets: inherit

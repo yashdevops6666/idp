@@ -1,0 +1,26 @@
+# The platform registers itself. If we ask teams to be discoverable and
+# owned, the platform is not exempt.
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: idp
+  title: Internal Developer Platform
+  description: Golden path workflows, scaffolding, Terraform baseline and guardrails.
+  annotations:
+    github.com/project-slug: jhi-platform/idp
+    backstage.io/techdocs-ref: dir:.
+  tags: [platform, github-actions, terraform, azure]
+spec:
+  type: service
+  owner: group:platform-engineering
+  system: developer-platform
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: developer-platform
+  description: Everything a team needs to ship a service without raising a ticket.
+spec:
+  owner: group:platform-engineering

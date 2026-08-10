@@ -1,0 +1,180 @@
+# Golden path CI.
+#
+# Application teams do not write this. They call it:
+#
+#   jobs:
+#     ci:
+#       uses: jhi-platform/idp/.github/workflows/reusable-service-ci.yml@v1
+#       with:
+#         service-name: pricing-feed
+#       secrets: inherit
+#
+# Everything below is owned by Platform Engineering. When we add a scan,
+# rotate a registry, or tighten a gate, every consuming repo gets it on
+# the next run. No 200 pull requests.
+
+name: Golden path CI
+
+on:
+  workflow_call:
+    inputs:
+      service-name:
+        description: Service name, must match catalog-info.yaml
+        required: true
+        type: string
+      runtime:
+        description: python | dotnet | node
+        required: false
+        default: python
+        type: string
+      publish-image:
+        description: Push a container image on main
+        required: false
+        default: true
+        type: boolean
+      severity-gate:
+        description: Fail the build at or above this CVE severity
+        required: false
+        default: high
+        type: string
+    outputs:
+      image-digest:
+        description: Digest of the published image
+        value: ${{ jobs.package.outputs.digest }}
+
+permissions:
+  contents: read
+  id-token: write          # OIDC to Azure. No stored cloud credentials anywhere.
+  packages: write
+  security-events: write   # so CodeQL/Trivy findings land in the Security tab
+
+concurrency:
+  group: ci-${{ inputs.service-name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate catalogue entry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # A service that isn't in the catalogue is a service nobody can page.
+      # This is the cheapest guardrail in the platform and it catches the
+      # most common failure: a repo that exists but has no owner.
+      - name: Require catalog-info.yaml
+        run: |
+          if [ ! -f catalog-info.yaml ]; then
+            echo "::error::No catalog-info.yaml. Run 'idp new-service' or copy the template."
+            exit 1
+          fi
+          python3 - <<'PY'
+          import sys, yaml
+          doc = yaml.safe_load(open("catalog-info.yaml"))
+          missing = [f for f in ("owner", "system", "lifecycle")
+                     if not doc.get("spec", {}).get(f)]
+          if missing:
+              sys.exit(f"catalog-info.yaml missing required fields: {missing}")
+          print(f"Owner: {doc['spec']['owner']}  Lifecycle: {doc['spec']['lifecycle']}")
+          PY
+
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up ${{ inputs.runtime }}
+        if: inputs.runtime == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Test
+        run: pytest --junitxml=results.xml --cov=app --cov-report=xml
+
+      - name: Publish test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ inputs.service-name }}
+          path: |
+            results.xml
+            coverage.xml
+
+  scan:
+    name: Security scan
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      # GitHub Advanced Security. Secret scanning and Dependabot are
+      # enabled org-wide by policy; CodeQL runs here so the results are
+      # tied to the build that produced them.
+      - name: CodeQL init
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ inputs.runtime == 'dotnet' && 'csharp' || 'python' }}
+
+      - name: CodeQL analyse
+        uses: github/codeql-action/analyze@v3
+
+      - name: Dependency scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          format: sarif
+          output: trivy.sarif
+          severity: ${{ inputs.severity-gate == 'critical' && 'CRITICAL' || 'HIGH,CRITICAL' }}
+          exit-code: '1'
+
+      - name: Upload findings
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy.sarif
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    needs: [build, scan]
+    if: github.ref == 'refs/heads/main' && inputs.publish-image
+    outputs:
+      digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Registry login
+        run: az acr login --name ${{ vars.PLATFORM_ACR }}
+
+      - name: Build and push
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ${{ vars.PLATFORM_ACR }}.azurecr.io/${{ inputs.service-name }}:${{ github.sha }}
+            ${{ vars.PLATFORM_ACR }}.azurecr.io/${{ inputs.service-name }}:latest
+          provenance: true
+          sbom: true
+
+      - name: Record build metadata
+        run: |
+          echo "### ${{ inputs.service-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "Digest: \`${{ steps.push.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY

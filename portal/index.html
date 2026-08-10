@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Platform · Internal Developer Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --base:#141F2E;
+    --raised:#1C2B3D;
+    --line:#2C3F55;
+    --paper:#DEE7EF;
+    --muted:#7F94AB;
+    --brass:#D9A441;
+    --teal:#4FB3A5;
+    --alert:#E0685C;
+
+    --display:'Bricolage Grotesque',system-ui,sans-serif;
+    --body:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+    --gut:clamp(20px,5vw,64px);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  body{
+    background:var(--base);
+    color:var(--paper);
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 var(--gut)}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--brass);
+  }
+
+  a{color:var(--teal)}
+
+  /* ---------------------------------------------------------- masthead */
+  .masthead{padding:clamp(56px,9vw,110px) 0 clamp(40px,6vw,72px)}
+
+  .masthead h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(38px,7.2vw,82px);
+    line-height:.98;
+    letter-spacing:-.035em;
+    margin:20px 0 0;
+    max-width:16ch;
+  }
+  .masthead h1 em{font-style:normal;color:var(--brass)}
+
+  .masthead p{
+    color:var(--muted);
+    max-width:56ch;
+    margin-top:22px;
+    font-size:clamp(16px,1.6vw,19px);
+  }
+
+  /* ------------------------------------------------ signature: the rail */
+  .rail-block{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:clamp(36px,5vw,60px) 0;
+    background:linear-gradient(180deg,rgba(28,43,61,.55),transparent);
+  }
+
+  .rail-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap}
+  .rail-head .total{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .rail-head .total b{color:var(--teal);font-weight:500}
+
+  .rail{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    margin-top:44px;
+    position:relative;
+  }
+
+  /* the line the stations sit on */
+  .rail::before{
+    content:"";
+    position:absolute;
+    left:calc(100%/12);
+    right:calc(100%/12);
+    top:7px;
+    height:2px;
+    background:var(--line);
+  }
+
+  /* the run travelling the line on load */
+  .rail::after{
+    content:"";
+    position:absolute;
+    left:calc(100%/12);
+    top:7px;
+    height:2px;
+    width:0;
+    background:linear-gradient(90deg,var(--brass),var(--teal));
+    animation:travel 2.4s cubic-bezier(.4,.05,.2,1) .35s forwards;
+  }
+  @keyframes travel{to{width:calc(100% - 100%/6)}}
+
+  .stop{padding:0 8px;position:relative;text-align:center}
+
+  .stop .dot{
+    width:16px;height:16px;border-radius:50%;
+    background:var(--base);
+    border:2px solid var(--line);
+    margin:0 auto;
+    position:relative;z-index:2;
+    animation:light 0s linear forwards;
+    animation-delay:calc(.5s + var(--i) * .4s);
+  }
+  @keyframes light{to{border-color:var(--brass);background:var(--brass);box-shadow:0 0 0 5px rgba(217,164,65,.14)}}
+
+  .stop .name{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(13px,1.5vw,17px);
+    letter-spacing:-.015em;
+    margin-top:16px;
+  }
+  .stop .what{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+  .stop .t{font-family:var(--mono);font-size:11px;color:var(--brass);margin-top:10px;display:block}
+
+  /* ------------------------------------------------------------ sections */
+  .section{padding:clamp(52px,7vw,88px) 0;border-bottom:1px solid var(--line)}
+  .section h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(24px,3.4vw,38px);
+    letter-spacing:-.025em;
+    margin:14px 0 0;
+  }
+  .section .lede{color:var(--muted);max-width:60ch;margin-top:14px}
+
+  /* --------------------------------------------------------- before/after */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:38px}
+
+  .pane{border:1px solid var(--line);background:var(--raised);border-radius:3px;overflow:hidden}
+  .pane header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 16px;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .pane header .count{color:var(--alert)}
+  .pane.after header .count{color:var(--teal)}
+  .pane pre{
+    font-family:var(--mono);font-size:12px;line-height:1.75;
+    padding:16px;overflow-x:auto;color:var(--paper);
+  }
+  .pane.before pre{color:var(--muted)}
+  .pane pre .k{color:var(--brass)}
+  .pane pre .c{color:#5A6E85}
+
+  /* ------------------------------------------------------------ catalogue */
+  .table{width:100%;border-collapse:collapse;margin-top:34px;font-size:14px}
+  .table th{
+    text-align:left;font-family:var(--mono);font-weight:400;font-size:11px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+    padding:0 14px 12px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  .table td{padding:14px;border-bottom:1px solid rgba(44,63,85,.5);vertical-align:middle}
+  .table td.svc{font-family:var(--mono);font-size:13px;color:var(--paper)}
+  .table td.team{color:var(--muted)}
+
+  .pill{
+    display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 9px;border-radius:2px;border:1px solid;
+  }
+  .pill.ok{color:var(--teal);border-color:rgba(79,179,165,.4);background:rgba(79,179,165,.08)}
+  .pill.warn{color:var(--brass);border-color:rgba(217,164,65,.4);background:rgba(217,164,65,.08)}
+  .pill.off{color:var(--alert);border-color:rgba(224,104,92,.4);background:rgba(224,104,92,.08)}
+
+  /* -------------------------------------------------------------- metrics */
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);margin-top:38px;border:1px solid var(--line)}
+  .metric{background:var(--base);padding:26px 20px}
+  .metric .v{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;color:var(--brass);line-height:1}
+  .metric .l{font-size:13px;color:var(--paper);margin-top:12px;font-weight:500}
+  .metric .n{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45}
+
+  /* ----------------------------------------------------------- guardrails */
+  .rails{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 40px;margin-top:34px}
+  .guard{border-left:2px solid var(--line);padding-left:18px}
+  .guard h3{font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:-.01em}
+  .guard p{font-size:13.5px;color:var(--muted);margin-top:6px}
+
+  footer{padding:44px 0 64px;font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.9}
+
+  @media (max-width:880px){
+    .rail{grid-template-columns:1fr;gap:26px}
+    .rail::before,.rail::after{display:none}
+    .stop{text-align:left;display:grid;grid-template-columns:auto 1fr;gap:0 16px;padding:0}
+    .stop .dot{margin:5px 0 0}
+    .stop .name{margin-top:0}
+    .stop .what,.stop .t{grid-column:2}
+    .compare,.rails{grid-template-columns:1fr}
+    .metrics{grid-template-columns:repeat(2,1fr)}
+    .table thead{display:none}
+    .table td{display:block;border:none;padding:3px 0}
+    .table tr{display:block;padding:16px 0;border-bottom:1px solid var(--line)}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .rail::after{animation:none;width:calc(100% - 100%/6)}
+    .stop .dot{animation-delay:0s}
+  }
+
+  :focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header class="masthead wrap">
+  <span class="eyebrow">Platform Engineering — Internal Developer Platform</span>
+  <h1>From nothing to a running service in <em>four minutes</em>.</h1>
+  <p>The paved road for services at JHI. You bring the code and the name of the team that gets paged. The platform brings the pipeline, the infrastructure, the scanning, the approvals and the alerting — and keeps bringing them, without you maintaining any of it.</p>
+</header>
+
+<section class="rail-block">
+  <div class="wrap">
+    <div class="rail-head">
+      <span class="eyebrow">The golden path</span>
+      <span class="total">measured median, 40 services · <b>3m 48s</b> to first green deploy</span>
+    </div>
+
+    <div class="rail">
+      <div class="stop"><div class="dot" style="--i:0"></div><div class="name">Scaffold</div><p class="what">Repo from template, team access, catalogue entry</p><span class="t">0:00</span></div>
+      <div class="stop"><div class="dot" style="--i:1"></div><div class="name">Build</div><p class="what">Dependency cache, tests, coverage published</p><span class="t">1:12</span></div>
+      <div class="stop"><div class="dot" style="--i:2"></div><div class="name">Scan</div><p class="what">CodeQL, secret scanning, CVE gate at high</p><span class="t">2:05</span></div>
+      <div class="stop"><div class="dot" style="--i:3"></div><div class="name">Provision</div><p class="what">Terraform plan on the PR, apply on merge</p><span class="t">3:04</span></div>
+      <div class="stop"><div class="dot" style="--i:4"></div><div class="name">Deploy</div><p class="what">Signed image, workload identity, no secrets</p><span class="t">3:41</span></div>
+      <div class="stop"><div class="dot" style="--i:5"></div><div class="name">Observe</div><p class="what">Logs, probes and a baseline alert already on</p><span class="t">3:48</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section wrap">
+  <span class="eyebrow">What a team actually maintains</span>
+  <h2>The pipeline is a dependency, not a copy.</h2>
+  <p class="lede">Migrating off Azure DevOps was the moment to stop shipping every team a pipeline to own. When the platform adds a scan or rotates a registry, every consuming repo picks it up on the next run — instead of forty pull requests and a spreadsheet.</p>
+
+  <div class="compare">
+    <div class="pane before">
+      <header><span>azure-pipelines.yml · inherited</span><span class="count">183 lines</span></header>
+<pre><span class="c"># copied from whichever repo looked closest,</span>
+<span class="c"># then edited until it went green</span>
+trigger: [main]
+pool: { name: 'Build-Win-DEV-01' }
+variables:
+  - group: svc-secrets      <span class="c"># 11 stored creds</span>
+steps:
+  - task: UsePythonVersion@0 ...
+  - script: pip install -r req.txt
+  - script: pytest
+  - task: Docker@2 ...
+  - task: AzureCLI@2 ...
+  <span class="c"># + 150 more lines, last reviewed 2023</span></pre>
+    </div>
+
+    <div class="pane after">
+      <header><span>.github/workflows/ci.yml · golden path</span><span class="count">12 lines</span></header>
+<pre>name: CI
+<span class="k">on</span>: { push: { branches: [main] }, pull_request: }
+
+<span class="k">jobs</span>:
+  ci:
+    <span class="k">uses</span>: jhi-platform/idp/.github/workflows/
+          reusable-service-ci.yml@v1
+    <span class="k">with</span>:
+      service-name: ${{ github.event.repository.name }}
+      runtime: python
+    <span class="k">secrets</span>: inherit
+<span class="c"># scanning, SBOM, signing and push are inherited</span>
+<span class="c"># credentials: none. OIDC only.</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="section wrap">
+  <span class="eyebrow">Catalogue</span>
+  <h2>Every service has a name, an owner and a path.</h2>
+  <p class="lede">A service that is not in the catalogue is a service nobody can page. The CI workflow fails without a valid entry, which is the cheapest guardrail in the platform and catches the most common failure of all: a repo that exists but has no owner.</p>
+
+  <table class="table">
+    <thead><tr><th>Service</th><th>Owner</th><th>System</th><th>Path</th><th>Last deploy</th></tr></thead>
+    <tbody>
+      <tr><td class="svc">pricing-feed</td><td class="team">Market Data</td><td class="team">Aladdin Data</td><td><span class="pill ok">Golden path</span></td><td class="team">2h ago</td></tr>
+      <tr><td class="svc">nav-recon</td><td class="team">Fund Ops Eng</td><td class="team">Fund Accounting</td><td><span class="pill ok">Golden path</span></td><td class="team">Yesterday</td></tr>
+      <tr><td class="svc">ibor-position-sync</td><td class="team">Investment Eng</td><td class="team">Aladdin Data</td><td><span class="pill warn">Migrating</span></td><td class="team">4d ago</td></tr>
+      <tr><td class="svc">client-reporting-api</td><td class="team">Distribution Eng</td><td class="team">Client Platform</td><td><span class="pill ok">Golden path</span></td><td class="team">6h ago</td></tr>
+      <tr><td class="svc">risk-limits-batch</td><td class="team">Risk Eng</td><td class="team">Risk</td><td><span class="pill warn">Migrating</span></td><td class="team">2d ago</td></tr>
+      <tr><td class="svc">legacy-fx-loader</td><td class="team">— unassigned</td><td class="team">Unknown</td><td><span class="pill off">Off path</span></td><td class="team">311d ago</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section wrap">
+  <span class="eyebrow">What we measure</span>
+  <h2>Adoption is the only score that counts.</h2>
+  <p class="lede">A platform nobody uses is a platform that failed, however good the engineering was. These are the four numbers reviewed monthly with engineering leads — and the reason the golden path has to stay genuinely easier than rolling your own.</p>
+
+  <div class="metrics">
+    <div class="metric"><div class="v">3m 48s</div><div class="l">Time to first deploy</div><p class="n">From request to a green run in dev. Was 9 days when it went through a ticket queue.</p></div>
+    <div class="metric"><div class="v">78%</div><div class="l">Services on the path</div><p class="n">Share of active services consuming the reusable workflows rather than a fork.</p></div>
+    <div class="metric"><div class="v">−64%</div><div class="l">Platform tickets</div><p class="n">Requests that used to need a platform engineer and now do not.</p></div>
+    <div class="metric"><div class="v">0</div><div class="l">Stored cloud credentials</div><p class="n">Workload identity federation everywhere. Nothing to rotate, nothing to leak.</p></div>
+  </div>
+</section>
+
+<section class="section wrap">
+  <span class="eyebrow">Guardrails</span>
+  <h2>Enforced by default, not by review board.</h2>
+
+  <div class="rails">
+    <div class="guard"><h3>Branch protection is applied, not requested</h3><p>Linear history, code owner review and required checks are set by the scaffolder at creation. There is no window in which a new repo is unprotected.</p></div>
+    <div class="guard"><h3>Production needs two approvals</h3><p>Environment protection rules live in GitHub, so the gate holds regardless of what a workflow file says. Dev applies straight through.</p></div>
+    <div class="guard"><h3>The reviewed plan is the applied plan</h3><p>Terraform plans are posted to the pull request and the same artefact is applied on merge, so what was approved and what ran are the same thing.</p></div>
+    <div class="guard"><h3>Tags are set by the platform</h3><p>Owner, cost centre and source repo are written by the baseline module. FinOps showback and the CMDB both key off them, so they are not left to memory.</p></div>
+    <div class="guard"><h3>Internal ingress by default</h3><p>Public exposure is an explicit variable a reviewer can see in the diff, rather than something inherited from a copied config.</p></div>
+    <div class="guard"><h3>Off-path services stay visible</h3><p>Nothing is blocked from leaving the path. It just shows up on this page with its owner next to it, which turns out to be enough.</p></div>
+  </div>
+</section>
+
+<footer class="wrap">
+  Platform Engineering · Release &amp; Environments<br>
+  Demonstration build — synthetic service data, no JHI systems involved.
+</footer>
+
+</body>
+</html>
