@@ -1,23 +1,30 @@
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { api, ApiError } from "../lib/api";
 import type { ChatMessage, ChatMode } from "../types";
 import styles from "./ChatPanel.module.css";
 
 const MAX_HISTORY_SENT = 8;
 
-const COPY: Record<ChatMode, { title: string; subtitle: string; empty: string; placeholder: string }> = {
+const COPY: Record<
+  ChatMode,
+  { title: string; subtitle: string; empty: string; placeholder: string; avatar: string }
+> = {
   platform: {
     title: "Platform Copilot",
     subtitle: "Grounded in this repo — Terraform, CI, and policy",
     empty:
       'Ask things like "why does prod need 2 approvers?" or "explain reusable-terraform.yml". It sticks to what\'s actually in this repo.',
     placeholder: "Ask the platform copilot…",
+    avatar: "P",
   },
   general: {
     title: "Claude",
     subtitle: "General assistant — not limited to this repo",
     empty: "Ask anything — this is plain Claude, no repo grounding or restrictions beyond that.",
     placeholder: "Ask Claude anything…",
+    avatar: "C",
   },
 };
 
@@ -65,9 +72,12 @@ export function ChatPanel({ mode, onClose }: { mode: ChatMode; onClose: () => vo
   }
 
   return (
-    <div className={`${styles.panel} ${mode === "general" ? styles.generalAccent : ""}`}>
+    <div className={`${styles.panel} glass ${mode === "general" ? styles.generalAccent : ""}`}>
       <header className={styles.header}>
-        <div>
+        <div className={`${styles.headAvatar} ${mode === "general" ? styles.avatarGeneral : styles.avatarPlatform}`}>
+          {copy.avatar}
+        </div>
+        <div className={styles.headText}>
           <div className={styles.title}>{copy.title}</div>
           <div className={styles.subtitle}>{copy.subtitle}</div>
         </div>
@@ -78,11 +88,30 @@ export function ChatPanel({ mode, onClose }: { mode: ChatMode; onClose: () => vo
 
       <div className={styles.messages} ref={scrollRef}>
         {messages.length === 0 && <p className={styles.empty}>{copy.empty}</p>}
-        {messages.map((m, i) => (
-          <div key={i} className={m.role === "user" ? styles.userBubble : styles.assistantBubble}>
-            {m.content || (pending && i === messages.length - 1 ? "…" : "")}
-          </div>
-        ))}
+        {messages.map((m, i) => {
+          const isLast = i === messages.length - 1;
+          const isUser = m.role === "user";
+          return (
+            <div key={i} className={isUser ? styles.rowUser : styles.rowAssistant}>
+              {!isUser && (
+                <div className={`${styles.avatar} ${mode === "general" ? styles.avatarGeneral : styles.avatarPlatform}`}>
+                  {copy.avatar}
+                </div>
+              )}
+              <div className={isUser ? styles.userBubble : styles.assistantBubble}>
+                {isUser ? (
+                  m.content
+                ) : (
+                  <div className={styles.markdown}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                    {pending && isLast && <span className={styles.cursor}>▍</span>}
+                  </div>
+                )}
+              </div>
+              {isUser && <div className={`${styles.avatar} ${styles.avatarUser}`}>You</div>}
+            </div>
+          );
+        })}
         {error && <p className={styles.error}>{error}</p>}
       </div>
 

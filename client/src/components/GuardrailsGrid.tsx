@@ -13,7 +13,7 @@ export function GuardrailsGrid() {
   return (
     <div className={styles.grid}>
       {guardrails.map((g) => (
-        <div className={styles.guard} key={g.title}>
+        <div className={`${styles.guard} glass`} key={g.title}>
           <h3 className={styles.title}>{g.title}</h3>
           <p className={styles.body}>{g.body}</p>
         </div>

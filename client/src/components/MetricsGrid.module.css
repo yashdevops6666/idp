@@ -1,22 +1,27 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--line);
+  gap: 14px;
   margin-top: 38px;
-  border: 1px solid var(--line);
 }
 .metric {
-  background: var(--base);
   padding: 26px 20px;
+  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+}
+.metric:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--glow-brass);
 }
 .value {
   font-family: var(--display);
   font-weight: 800;
   font-size: clamp(28px, 4vw, 44px);
   letter-spacing: -0.03em;
-  color: var(--brass);
   line-height: 1;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .label {
   font-size: 13px;

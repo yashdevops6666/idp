@@ -9,11 +9,13 @@
   align-items: center;
   gap: 28px;
   padding: 18px var(--gut);
-  border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
-  background: rgba(20, 31, 46, 0.92);
-  backdrop-filter: blur(6px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 1px 0 0 rgba(217, 164, 65, 0.15);
   z-index: 10;
 }
 
@@ -22,7 +24,10 @@
   font-weight: 800;
   letter-spacing: -0.02em;
   font-size: 17px;
-  color: var(--brass);
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .links {
@@ -34,6 +39,7 @@
 .links a {
   color: var(--muted);
   text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .links a:hover {
   color: var(--paper);
@@ -47,10 +53,11 @@
   background: none;
   border: 1px solid var(--line);
   color: var(--muted);
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   padding: 7px 12px;
   font-size: 12.5px;
   cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
 }
 .logout:hover {
   color: var(--paper);
@@ -64,7 +71,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--brass);
+  background: var(--grad-brand);
   color: var(--base);
   border: none;
   font-family: var(--mono);
@@ -73,12 +80,17 @@
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   z-index: 20;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .fab:hover {
-  filter: brightness(1.08);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: var(--glow-brass), 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .fabGeneral {
   right: 92px;
-  background: var(--teal);
+  background: var(--grad-teal);
+}
+.fabGeneral:hover {
+  box-shadow: var(--glow-teal), 0 8px 24px rgba(0, 0, 0, 0.35);
 }

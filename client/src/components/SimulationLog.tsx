@@ -3,7 +3,7 @@ import styles from "./SimulationLog.module.css";
 
 export function SimulationLog({ steps }: { steps: ScaffoldStep[] }) {
   return (
-    <ol className={styles.log}>
+    <ol className={`${styles.log} glass`}>
       {steps.map((step) => (
         <li key={step.order} className={styles.step}>
           <div className={styles.stepHead}>

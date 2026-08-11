@@ -1,8 +1,9 @@
 .block {
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
   padding: clamp(36px, 5vw, 60px) 0;
-  background: linear-gradient(180deg, rgba(28, 43, 61, 0.55), transparent);
+  background: linear-gradient(180deg, rgba(217, 164, 65, 0.06), transparent 40%),
+    linear-gradient(180deg, rgba(28, 43, 61, 0.55), transparent);
 }
 
 .head {
@@ -56,9 +57,14 @@
 }
 
 .stop {
-  padding: 0 8px;
+  padding: 8px 8px;
   position: relative;
   text-align: center;
+  border-radius: var(--radius-md);
+  transition: background var(--dur-med) var(--ease-out);
+}
+.stop:hover {
+  background: rgba(217, 164, 65, 0.06);
 }
 
 .dot {
@@ -76,8 +82,8 @@
 @keyframes light {
   to {
     border-color: var(--brass);
-    background: var(--brass);
-    box-shadow: 0 0 0 5px rgba(217, 164, 65, 0.14);
+    background: var(--grad-brand);
+    box-shadow: var(--glow-brass);
   }
 }
 

@@ -7,17 +7,19 @@ import styles from "./Home.module.css";
 export function Home() {
   return (
     <>
-      <header className={`${styles.masthead} wrap`}>
-        <span className="eyebrow">Platform Engineering — Internal Developer Platform</span>
-        <h1 className={styles.h1}>
-          From nothing to a running service in <em>four minutes</em>.
-        </h1>
-        <p className={styles.lede}>
-          The paved road for services on this platform. You bring the code and the name of the
-          team that gets paged. The platform brings the pipeline, the infrastructure, the
-          scanning, the approvals and the alerting — and keeps bringing them, without you
-          maintaining any of it.
-        </p>
+      <header className={styles.masthead}>
+        <div className="wrap">
+          <span className="eyebrow">Platform Engineering — Internal Developer Platform</span>
+          <h1 className={styles.h1}>
+            From nothing to a running service in <em>four minutes</em>.
+          </h1>
+          <p className={styles.lede}>
+            The paved road for services on this platform. You bring the code and the name of the
+            team that gets paged. The platform brings the pipeline, the infrastructure, the
+            scanning, the approvals and the alerting — and keeps bringing them, without you
+            maintaining any of it.
+          </p>
+        </div>
       </header>
 
       <GoldenPathRail />

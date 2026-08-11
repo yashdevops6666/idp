@@ -7,30 +7,36 @@
 .filter {
   flex: 1;
   min-width: 220px;
-  background: var(--raised);
-  border: 1px solid var(--line);
-  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
   color: var(--paper);
   padding: 9px 12px;
   font-size: 13.5px;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 .filter:focus {
-  border-color: var(--brass);
+  box-shadow: var(--glow-brass);
 }
 .sort {
-  background: var(--raised);
-  border: 1px solid var(--line);
-  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
   color: var(--paper);
   padding: 9px 12px;
   font-size: 13px;
   font-family: var(--mono);
 }
 
+.tableCard {
+  margin-top: 18px;
+  padding: 6px var(--gut-inner, 8px);
+  overflow-x: auto;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 18px;
   font-size: 14px;
 }
 .table th {
@@ -41,14 +47,20 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
-  padding: 0 14px 12px;
-  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--glass-border);
   white-space: nowrap;
 }
 .table td {
   padding: 14px;
-  border-bottom: 1px solid rgba(44, 63, 85, 0.5);
+  border-bottom: 1px solid rgba(222, 231, 239, 0.05);
   vertical-align: middle;
+}
+.row {
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.row:hover {
+  background: rgba(217, 164, 65, 0.06);
 }
 .svc {
   font-family: var(--mono);

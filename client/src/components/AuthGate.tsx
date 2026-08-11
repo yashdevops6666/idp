@@ -44,7 +44,7 @@ function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div className={styles.gate}>
-      <form className={styles.card} onSubmit={handleSubmit}>
+      <form className={`${styles.card} glass`} onSubmit={handleSubmit}>
         <span className="eyebrow">Platform Engineering</span>
         <h1 className={styles.title}>
           This is a shared demo. <em>Enter the access password to continue.</em>

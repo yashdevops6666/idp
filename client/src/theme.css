@@ -16,6 +16,31 @@
   --mono: "IBM Plex Mono", ui-monospace, monospace;
 
   --gut: clamp(20px, 5vw, 64px);
+
+  /* ---- gradient / glass / glow: layered on top of the flat canvas above,
+     used on interactive surfaces (nav, buttons, cards, chat) rather than
+     body text/backgrounds, so the base identity evolves instead of resets. */
+  --grad-brand: linear-gradient(135deg, #f0c674 0%, var(--brass) 55%, #b9812c 100%);
+  --grad-teal: linear-gradient(135deg, #7fd6c8 0%, var(--teal) 55%, #2f8a7d 100%);
+  --grad-hero: radial-gradient(60% 50% at 15% 0%, rgba(217, 164, 65, 0.16), transparent 60%),
+    radial-gradient(50% 45% at 90% 10%, rgba(79, 179, 165, 0.14), transparent 60%),
+    var(--base);
+
+  --glass-bg: rgba(28, 43, 61, 0.55);
+  --glass-border: rgba(222, 231, 239, 0.08);
+  --glass-blur: 16px;
+
+  --glow-brass: 0 0 0 1px rgba(217, 164, 65, 0.5), 0 0 24px rgba(217, 164, 65, 0.35);
+  --glow-teal: 0 0 0 1px rgba(79, 179, 165, 0.5), 0 0 24px rgba(79, 179, 165, 0.35);
+  --glow-alert: 0 0 0 1px rgba(224, 104, 92, 0.5), 0 0 24px rgba(224, 104, 92, 0.3);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-med: 320ms;
 }
 
 *,
@@ -96,21 +121,41 @@ button {
   padding: 3px 9px;
   border-radius: 2px;
   border: 1px solid;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 .pill.ok {
   color: var(--teal);
   border-color: rgba(79, 179, 165, 0.4);
   background: rgba(79, 179, 165, 0.08);
 }
+.pill.ok:hover {
+  box-shadow: var(--glow-teal);
+}
 .pill.warn {
   color: var(--brass);
   border-color: rgba(217, 164, 65, 0.4);
   background: rgba(217, 164, 65, 0.08);
 }
+.pill.warn:hover {
+  box-shadow: var(--glow-brass);
+}
 .pill.off {
   color: var(--alert);
   border-color: rgba(224, 104, 92, 0.4);
   background: rgba(224, 104, 92, 0.08);
+}
+.pill.off:hover {
+  box-shadow: var(--glow-alert);
+}
+
+/* Reusable frosted-glass surface — one recipe every component opts into
+   instead of repeating background/backdrop-filter/border by hand. */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
 }
 
 @media (prefers-reduced-motion: reduce) {

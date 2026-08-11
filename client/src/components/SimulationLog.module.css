@@ -1,15 +1,16 @@
 .log {
   list-style: none;
   margin-top: 24px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--raised);
   overflow: hidden;
 }
 
 .step {
   padding: 14px 18px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--glass-border);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.step:hover {
+  background: rgba(217, 164, 65, 0.05);
 }
 
 .stepHead {
@@ -24,6 +25,7 @@
   color: var(--teal);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  text-shadow: 0 0 12px rgba(79, 179, 165, 0.5);
 }
 
 .label {

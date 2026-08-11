@@ -6,17 +6,21 @@
 }
 
 .pane {
-  border: 1px solid var(--line);
-  background: var(--raised);
-  border-radius: 3px;
   overflow: hidden;
+  transition: box-shadow var(--dur-med) var(--ease-out);
+}
+.pane.after:hover {
+  box-shadow: var(--glow-teal);
+}
+.pane.before:hover {
+  box-shadow: var(--glow-alert);
 }
 .pane header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--glass-border);
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.1em;

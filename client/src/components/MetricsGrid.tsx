@@ -13,7 +13,7 @@ export function MetricsGrid() {
   return (
     <div className={styles.grid}>
       {metrics.map((m) => (
-        <div className={styles.metric} key={m.label}>
+        <div className={`${styles.metric} glass`} key={m.label}>
           <div className={styles.value}>{m.value}</div>
           <div className={styles.label}>{m.label}</div>
           <p className={styles.note}>{m.note}</p>

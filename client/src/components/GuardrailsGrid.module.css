@@ -1,12 +1,27 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 22px 40px;
+  gap: 18px 20px;
   margin-top: 34px;
 }
 .guard {
-  border-left: 2px solid var(--line);
-  padding-left: 18px;
+  position: relative;
+  padding: 18px 20px;
+  overflow: hidden;
+  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+}
+.guard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--grad-teal);
+}
+.guard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--glow-teal);
 }
 .title {
   font-family: var(--display);

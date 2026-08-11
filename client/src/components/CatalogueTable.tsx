@@ -43,45 +43,47 @@ export function CatalogueTable({ services }: { services: Service[] }) {
         </select>
       </div>
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Owner</th>
-            <th>System</th>
-            <th>Path</th>
-            <th>Last deploy</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.map((s) => (
-            <tr key={s.id}>
-              <td className={styles.svc}>
-                {s.repoUrl ? (
-                  <a href={s.repoUrl} target="_blank" rel="noreferrer">
-                    {s.name}
-                  </a>
-                ) : (
-                  s.name
-                )}
-              </td>
-              <td className={styles.team}>{s.owner}</td>
-              <td className={styles.team}>{s.system}</td>
-              <td>
-                <StatusPill status={s.status} />
-              </td>
-              <td className={styles.team}>{s.lastDeploy}</td>
-            </tr>
-          ))}
-          {filtered.length === 0 && (
+      <div className={`${styles.tableCard} glass`}>
+        <table className={styles.table}>
+          <thead>
             <tr>
-              <td colSpan={5} className={styles.emptyRow}>
-                No services match &ldquo;{filter}&rdquo;.
-              </td>
+              <th>Service</th>
+              <th>Owner</th>
+              <th>System</th>
+              <th>Path</th>
+              <th>Last deploy</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filtered.map((s) => (
+              <tr key={s.id} className={styles.row}>
+                <td className={styles.svc}>
+                  {s.repoUrl ? (
+                    <a href={s.repoUrl} target="_blank" rel="noreferrer">
+                      {s.name}
+                    </a>
+                  ) : (
+                    s.name
+                  )}
+                </td>
+                <td className={styles.team}>{s.owner}</td>
+                <td className={styles.team}>{s.system}</td>
+                <td>
+                  <StatusPill status={s.status} />
+                </td>
+                <td className={styles.team}>{s.lastDeploy}</td>
+              </tr>
+            ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={5} className={styles.emptyRow}>
+                  No services match &ldquo;{filter}&rdquo;.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

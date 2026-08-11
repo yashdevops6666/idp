@@ -2,32 +2,69 @@
   position: fixed;
   bottom: 92px;
   right: 24px;
-  width: min(380px, calc(100vw - 32px));
-  height: min(560px, calc(100vh - 140px));
-  background: var(--raised);
-  border: 1px solid var(--line);
-  border-top: 3px solid var(--brass);
-  border-radius: 8px;
+  width: min(400px, calc(100vw - 32px));
+  height: min(580px, calc(100vh - 140px));
+  border-top: 3px solid transparent;
+  background-image: linear-gradient(var(--glass-bg), var(--glass-bg)), var(--grad-brand);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
   display: flex;
   flex-direction: column;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
   z-index: 20;
   overflow: hidden;
+  animation: rise var(--dur-med) var(--ease-out);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .generalAccent {
-  border-top-color: var(--teal);
-}
-.generalAccent .userBubble {
-  background: var(--teal);
+  background-image: linear-gradient(var(--glass-bg), var(--glass-bg)), var(--grad-teal);
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--line);
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--glass-border);
+  position: relative;
+}
+.header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 100% at 0% 0%, rgba(217, 164, 65, 0.08), transparent 60%);
+  pointer-events: none;
+}
+.generalAccent .header::after {
+  background: radial-gradient(120% 100% at 0% 0%, rgba(79, 179, 165, 0.08), transparent 60%);
+}
+
+.headAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--base);
+  flex-shrink: 0;
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
 }
 
 .title {
@@ -39,7 +76,7 @@
 .subtitle {
   color: var(--muted);
   font-size: 11.5px;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 .close {
@@ -49,6 +86,7 @@
   font-size: 20px;
   line-height: 1;
   cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .close:hover {
   color: var(--paper);
@@ -57,10 +95,10 @@
 .messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 18px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .empty {
@@ -69,27 +107,146 @@
   line-height: 1.6;
 }
 
-.userBubble {
-  align-self: flex-end;
-  background: var(--brass);
+.avatar,
+.headAvatar {
+  background: var(--grad-brand);
+}
+.avatarPlatform {
+  background: var(--grad-brand);
+}
+.avatarGeneral {
+  background: var(--grad-teal);
+}
+.avatarUser {
+  background: var(--line);
+  color: var(--paper);
+  font-size: 9px;
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 11px;
   color: var(--base);
-  padding: 8px 12px;
-  border-radius: 10px 10px 2px 10px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rowUser,
+.rowAssistant {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.rowUser {
+  flex-direction: row-reverse;
+}
+
+.userBubble {
+  background: var(--grad-brand);
+  color: var(--base);
+  padding: 9px 13px;
+  border-radius: var(--radius-md) var(--radius-md) 2px var(--radius-md);
   font-size: 13.5px;
-  max-width: 85%;
+  max-width: 78%;
   white-space: pre-wrap;
+  font-weight: 500;
+}
+.generalAccent .userBubble {
+  background: var(--grad-teal);
 }
 
 .assistantBubble {
-  align-self: flex-start;
-  background: var(--base);
-  border: 1px solid var(--line);
-  padding: 8px 12px;
-  border-radius: 10px 10px 10px 2px;
+  background: rgba(20, 31, 46, 0.6);
+  border: 1px solid var(--glass-border);
+  padding: 9px 13px;
+  border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 2px;
   font-size: 13.5px;
-  max-width: 90%;
-  white-space: pre-wrap;
+  max-width: 85%;
   min-height: 1.4em;
+}
+
+.markdown {
+  line-height: 1.55;
+}
+.markdown :global(p) {
+  margin: 0 0 8px;
+}
+.markdown :global(p:last-child) {
+  margin-bottom: 0;
+}
+.markdown :global(ul),
+.markdown :global(ol) {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+.markdown :global(li) {
+  margin-bottom: 3px;
+}
+.markdown :global(strong) {
+  color: var(--paper);
+  font-weight: 700;
+}
+.markdown :global(a) {
+  color: var(--teal);
+}
+.markdown :global(code) {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.markdown :global(pre) {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  overflow-x: auto;
+  margin: 0 0 8px;
+}
+.markdown :global(pre code) {
+  background: none;
+  padding: 0;
+}
+.markdown :global(table) {
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+.markdown :global(th),
+.markdown :global(td) {
+  border: 1px solid var(--glass-border);
+  padding: 4px 8px;
+  text-align: left;
+}
+.markdown :global(h1),
+.markdown :global(h2),
+.markdown :global(h3) {
+  font-family: var(--display);
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+
+.cursor {
+  display: inline-block;
+  color: var(--brass);
+  animation: blink 1s step-start infinite;
+}
+.generalAccent .cursor {
+  color: var(--teal);
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .error {
@@ -101,31 +258,39 @@
   display: flex;
   gap: 8px;
   padding: 12px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--glass-border);
 }
 
 .input {
   flex: 1;
-  background: var(--base);
-  border: 1px solid var(--line);
-  border-radius: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
   color: var(--paper);
   padding: 9px 11px;
   font-size: 13.5px;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 .input:focus {
-  border-color: var(--brass);
+  box-shadow: var(--glow-brass);
+}
+.generalAccent .input:focus {
+  box-shadow: var(--glow-teal);
 }
 
 .send {
-  background: var(--teal);
+  background: var(--grad-teal);
   color: var(--base);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 0 14px;
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+.send:hover:not(:disabled) {
+  box-shadow: var(--glow-teal);
 }
 .send:disabled {
   opacity: 0.4;

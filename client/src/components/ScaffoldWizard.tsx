@@ -54,7 +54,7 @@ export function ScaffoldWizard() {
         </p>
         <SimulationLog steps={result.steps} />
 
-        <div className={styles.yamlPane}>
+        <div className={`${styles.yamlPane} glass`}>
           <header>catalog-info.yaml</header>
           <pre>{result.catalogInfoYaml}</pre>
         </div>

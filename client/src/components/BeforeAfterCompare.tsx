@@ -3,7 +3,7 @@ import styles from "./BeforeAfterCompare.module.css";
 export function BeforeAfterCompare() {
   return (
     <div className={styles.compare}>
-      <div className={`${styles.pane} ${styles.before}`}>
+      <div className={`${styles.pane} ${styles.before} glass`}>
         <header>
           <span>azure-pipelines.yml · inherited</span>
           <span className={styles.countBefore}>183 lines</span>
@@ -30,7 +30,7 @@ export function BeforeAfterCompare() {
         </pre>
       </div>
 
-      <div className={`${styles.pane} ${styles.after}`}>
+      <div className={`${styles.pane} ${styles.after} glass`}>
         <header>
           <span>.github/workflows/ci.yml · golden path</span>
           <span className={styles.countAfter}>12 lines</span>

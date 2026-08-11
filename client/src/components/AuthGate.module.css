@@ -12,17 +12,16 @@
   display: grid;
   place-items: center;
   padding: 24px;
+  background: var(--grad-hero);
 }
 
 .card {
   width: min(440px, 100%);
-  border: 1px solid var(--line);
-  background: var(--raised);
-  border-radius: 4px;
-  padding: 36px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
 }
 
 .title {
@@ -34,30 +33,39 @@
 }
 .title em {
   font-style: normal;
-  color: var(--brass);
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .input {
   font-family: var(--mono);
   font-size: 14px;
-  background: var(--base);
-  border: 1px solid var(--line);
-  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
   color: var(--paper);
   padding: 12px 14px;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 .input:focus {
-  border-color: var(--brass);
+  box-shadow: var(--glow-brass);
 }
 
 .button {
-  background: var(--brass);
+  background: var(--grad-brand);
   color: var(--base);
   border: none;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   padding: 12px 16px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--glow-brass);
 }
 .button:disabled {
   opacity: 0.5;
