@@ -45,3 +45,37 @@ export function chatDailyLimiter(req: SessionKeyRequest, res: Response, next: Ne
   entry.count += 1;
   next();
 }
+
+// Guards real GitHub repo creation specifically (not the simulated path)
+// with a low daily cap per session, so the shared site password can't be
+// used to spam-create repos on the configured real GitHub account. Same
+// in-memory-counter shape as chatDailyLimiter above.
+const REAL_SCAFFOLD_DAILY_LIMIT = 5;
+const realScaffoldCounts = new Map<string, { count: number; resetAt: number }>();
+
+type ScaffoldRealRequest = SessionKeyRequest & { body?: { real?: boolean } };
+
+export function scaffoldRealLimiter(req: ScaffoldRealRequest, res: Response, next: NextFunction) {
+  if (req.body?.real !== true) {
+    next();
+    return;
+  }
+
+  const key = req.sessionKey ?? req.ip ?? "anonymous";
+  const now = Date.now();
+  const entry = realScaffoldCounts.get(key);
+
+  if (!entry || entry.resetAt < now) {
+    realScaffoldCounts.set(key, { count: 1, resetAt: now + 24 * 60 * 60 * 1000 });
+    next();
+    return;
+  }
+
+  if (entry.count >= REAL_SCAFFOLD_DAILY_LIMIT) {
+    res.status(429).json({ error: "Daily limit for real repo creation reached for this session. Try again tomorrow." });
+    return;
+  }
+
+  entry.count += 1;
+  next();
+}

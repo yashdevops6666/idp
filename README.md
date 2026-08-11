@@ -90,17 +90,31 @@ npm start        # single Node process: /api/* + the built client, on $PORT
 **Required environment variables** (see `.env.example`): `ANTHROPIC_API_KEY`,
 `SITE_PASSWORD`, `COOKIE_SECRET`, `CHAT_MODEL`, `CHAT_MAX_TOKENS`. Set these
 in Railway's project settings before the first deploy — the server fails
-fast at startup if any are missing.
+fast at startup if any are missing. `GITHUB_PAT` and `GITHUB_OWNER` are
+optional — see below.
 
 **What's real and what's simulated.** The catalogue, metrics, guardrails and
 golden-path data are served from `data/*.json` and are illustrative, not
-live telemetry. The "New service" wizard and `scripts/new-service.sh
---dry-run` both walk through the *exact* same steps a real provisioning run
-would take — reading the real `policy/*.json` and `templates/` files — but
-neither one ever calls `gh` or `az` against a real GitHub org or Azure
-subscription. The chatbot is a real, live call to the Anthropic API,
-grounded in this repo's own files, rate-limited per session since it runs
-on a personal API key shared across a testing team.
+live telemetry. `scripts/new-service.sh --dry-run` and the "New service"
+wizard's default (simulated) path both walk through the same steps a real
+provisioning run would take — reading the real `policy/*.json` and
+`templates/` files — without calling `gh` or `az` against anything real.
+
+If `GITHUB_PAT` (a classic PAT with `repo` scope) and `GITHUB_OWNER` are set,
+the wizard also offers a **real** mode: repository creation, the
+`catalog-info.yaml` commit, and branch protection become genuine GitHub API
+calls against that account (branch protection is adapted — the CI status
+checks in `policy/branch-protection.json` don't exist yet on a freshly
+created repo, so `required_status_checks` is disabled rather than
+permanently blocking merges). GitHub Environments and Azure OIDC federation
+stay simulated either way — there's no Azure subscription behind this demo.
+Real creation is off by default every time the form loads, requires
+retyping the service name to confirm, and is capped at 5 real creations per
+session per day.
+
+The chatbot is a real, live call to the Anthropic API, grounded in this
+repo's own files, rate-limited per session since it runs on a personal API
+key shared across a testing team.
 
 ## Design decisions worth arguing about
 

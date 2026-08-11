@@ -4,6 +4,7 @@ import type {
   Guardrail,
   GoldenPathStop,
   Metric,
+  ScaffoldConfig,
   ScaffoldRequest,
   ScaffoldResponse,
   Service,
@@ -46,8 +47,7 @@ export const api = {
   guardrails: () => request<Guardrail[]>("/guardrails"),
   goldenPath: () => request<GoldenPathStop[]>("/golden-path"),
 
-  scaffoldConfig: () =>
-    request<{ namePattern: string; runtimes: string[]; lifecycles: string[] }>("/scaffold/config"),
+  scaffoldConfig: () => request<ScaffoldConfig>("/scaffold/config"),
   scaffold: (input: ScaffoldRequest) =>
     request<ScaffoldResponse>("/scaffold", { method: "POST", body: JSON.stringify(input) }),
 

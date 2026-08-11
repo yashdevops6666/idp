@@ -17,7 +17,7 @@ export interface Service {
   runtime: Runtime;
   lifecycle: Lifecycle;
   costCentre?: string;
-  createdVia: "seed" | "scaffold-simulation";
+  createdVia: "seed" | "scaffold-simulation" | "scaffold-real";
   repoUrl?: string;
 }
 
@@ -47,6 +47,11 @@ export interface ScaffoldRequest {
   costCentre: string;
   runtime: Runtime;
   lifecycle: Lifecycle;
+  // When true and the server has GITHUB_PAT configured, this creates a
+  // REAL repository under the configured GitHub account instead of only
+  // simulating the provisioning steps.
+  real?: boolean;
+  visibility?: "private" | "public";
 }
 
 export interface ScaffoldStep {
@@ -54,13 +59,25 @@ export interface ScaffoldStep {
   label: string;
   command: string;
   description: string;
-  simulated: true;
+  simulated: boolean;
+  status: "ok" | "error";
+  error?: string;
+  url?: string;
 }
 
 export interface ScaffoldResponse {
   steps: ScaffoldStep[];
   catalogInfoYaml: string;
   service: Service;
+  mode: "simulated" | "real";
+}
+
+export interface ScaffoldConfig {
+  namePattern: string;
+  runtimes: Runtime[];
+  lifecycles: Lifecycle[];
+  githubConfigured: boolean;
+  githubOwner: string | null;
 }
 
 export interface ChatMessage {

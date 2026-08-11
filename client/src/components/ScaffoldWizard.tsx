@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
-import type { Lifecycle, Runtime, ScaffoldResponse } from "../types";
+import type { Lifecycle, Runtime, ScaffoldConfig, ScaffoldResponse } from "../types";
 import { SimulationLog } from "./SimulationLog";
 import styles from "./ScaffoldWizard.module.css";
 
@@ -16,14 +16,22 @@ const initialForm = {
 
 export function ScaffoldWizard() {
   const [form, setForm] = useState(initialForm);
-  const [config, setConfig] = useState<{ runtimes: string[]; lifecycles: string[] } | null>(null);
+  const [config, setConfig] = useState<ScaffoldConfig | null>(null);
   const [result, setResult] = useState<ScaffoldResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Real-creation is a genuinely destructive path (creates a repo on a
+  // real GitHub account) — off by default on every load, no persistence.
+  const [real, setReal] = useState(false);
+  const [visibility, setVisibility] = useState<"private" | "public">("private");
+  const [confirmName, setConfirmName] = useState("");
+
   useEffect(() => {
     api.scaffoldConfig().then(setConfig).catch(() => setConfig(null));
   }, []);
+
+  const realReady = !real || (confirmName.trim() === form.name.trim() && form.name.trim().length > 0);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -31,7 +39,7 @@ export function ScaffoldWizard() {
     setError(null);
     setResult(null);
     try {
-      const res = await api.scaffold(form);
+      const res = await api.scaffold({ ...form, real, visibility });
       setResult(res);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong.");
@@ -44,13 +52,24 @@ export function ScaffoldWizard() {
     setForm(initialForm);
     setResult(null);
     setError(null);
+    setReal(false);
+    setConfirmName("");
   }
 
   if (result) {
+    const isReal = result.mode === "real";
     return (
       <div>
         <p className={styles.success}>
-          <strong>{result.service.name}</strong> is on the golden path (simulated).
+          {isReal ? (
+            <>
+              <strong>{result.service.name}</strong> was created for real on GitHub.
+            </>
+          ) : (
+            <>
+              <strong>{result.service.name}</strong> is on the golden path (simulated).
+            </>
+          )}
         </p>
         <SimulationLog steps={result.steps} />
 
@@ -60,7 +79,12 @@ export function ScaffoldWizard() {
         </div>
 
         <div className={styles.actions}>
-          <Link className={styles.primary} to="/catalogue">
+          {isReal && result.service.repoUrl && (
+            <a className={styles.primary} href={result.service.repoUrl} target="_blank" rel="noreferrer">
+              View the real repo →
+            </a>
+          )}
+          <Link className={isReal ? styles.secondary : styles.primary} to="/catalogue">
             View in catalogue
           </Link>
           <button className={styles.secondary} onClick={reset}>
@@ -138,10 +162,72 @@ export function ScaffoldWizard() {
         </label>
       </div>
 
+      {config?.githubConfigured && (
+        <div className={`${styles.realBox} glass`}>
+          <label className={styles.realToggle}>
+            <input
+              type="checkbox"
+              checked={real}
+              onChange={(e) => {
+                setReal(e.target.checked);
+                setConfirmName("");
+              }}
+            />
+            <span>
+              Create a <strong>REAL</strong> repository on GitHub (under{" "}
+              <code>{config.githubOwner}</code>)
+            </span>
+          </label>
+
+          {real && (
+            <div className={styles.realDetails}>
+              <p className={styles.realWarning}>
+                This creates a real repository at{" "}
+                <code>
+                  github.com/{config.githubOwner}/{form.name || "…"}
+                </code>
+                . Branch protection will really be applied. This can&apos;t be undone from this UI —
+                delete it manually on GitHub if needed.
+              </p>
+
+              <div className={styles.visibilityRow}>
+                <label>
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={visibility === "private"}
+                    onChange={() => setVisibility("private")}
+                  />
+                  Private
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={visibility === "public"}
+                    onChange={() => setVisibility("public")}
+                  />
+                  Public
+                </label>
+              </div>
+
+              <label className={styles.field}>
+                <span>Type the service name to confirm</span>
+                <input
+                  value={confirmName}
+                  onChange={(e) => setConfirmName(e.target.value)}
+                  placeholder={form.name || "service name"}
+                />
+              </label>
+            </div>
+          )}
+        </div>
+      )}
+
       {error && <p className={styles.error}>{error}</p>}
 
-      <button className={styles.submit} type="submit" disabled={submitting}>
-        {submitting ? "Provisioning…" : "Create service"}
+      <button className={styles.submit} type="submit" disabled={submitting || !realReady}>
+        {submitting ? "Provisioning…" : real ? "Create real service" : "Create service"}
       </button>
     </form>
   );
