@@ -1,0 +1,25 @@
+.typed {
+  color: var(--brass);
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--brass);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.75s step-end infinite;
+  box-shadow: 0 0 10px var(--brass);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

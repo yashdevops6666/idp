@@ -10,7 +10,7 @@
   transition: background var(--dur-fast) var(--ease-out);
 }
 .step:hover {
-  background: rgba(217, 164, 65, 0.05);
+  background: rgba(0, 229, 255, 0.05);
 }
 
 .stepHead {
@@ -25,7 +25,7 @@
   color: var(--teal);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  text-shadow: 0 0 12px rgba(79, 179, 165, 0.5);
+  text-shadow: 0 0 12px rgba(155, 89, 255, 0.5);
 }
 
 .errorBadge {
@@ -34,7 +34,7 @@
   color: var(--alert);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  text-shadow: 0 0 12px rgba(224, 104, 92, 0.5);
+  text-shadow: 0 0 12px rgba(255, 45, 120, 0.5);
 }
 
 .simBadge,
@@ -53,8 +53,8 @@
 }
 .realBadge {
   color: var(--brass);
-  border-color: rgba(217, 164, 65, 0.4);
-  background: rgba(217, 164, 65, 0.08);
+  border-color: rgba(0, 229, 255, 0.4);
+  background: rgba(0, 229, 255, 0.08);
 }
 
 .errorText {

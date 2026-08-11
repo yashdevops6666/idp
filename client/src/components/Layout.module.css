@@ -2,6 +2,12 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* Explicitly stacked above ParticleCanvas (fixed, z-index:0): a static
+     (non-positioned) element sits BELOW any positioned z-index:0 sibling
+     in CSS stacking order regardless of DOM order, so without this the
+     canvas would render on top of the actual page content. */
+  position: relative;
+  z-index: 1;
 }
 
 .nav {
@@ -15,7 +21,7 @@
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border-bottom: 1px solid var(--glass-border);
-  box-shadow: 0 1px 0 0 rgba(217, 164, 65, 0.15);
+  box-shadow: 0 1px 0 0 rgba(0, 229, 255, 0.15);
   z-index: 10;
 }
 

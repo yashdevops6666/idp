@@ -5,6 +5,8 @@
   color: var(--muted);
   font-family: var(--mono);
   font-size: 13px;
+  position: relative;
+  z-index: 1;
 }
 
 .gate {
@@ -12,6 +14,9 @@
   display: grid;
   place-items: center;
   padding: 24px;
+  /* Above ParticleCanvas — see the matching comment in Layout.module.css. */
+  position: relative;
+  z-index: 1;
 }
 
 .card {

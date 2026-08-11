@@ -2,7 +2,16 @@ import { GoldenPathRail } from "../components/GoldenPathRail";
 import { BeforeAfterCompare } from "../components/BeforeAfterCompare";
 import { MetricsGrid } from "../components/MetricsGrid";
 import { GuardrailsGrid } from "../components/GuardrailsGrid";
+import { Reveal } from "../components/effects/Reveal";
+import { TypingText } from "../components/effects/TypingText";
 import styles from "./Home.module.css";
+
+const TAGLINES = [
+  "golden-path CI in 12 lines",
+  "OIDC — zero stored credentials",
+  "branch protection applied, not requested",
+  "reviewed plan = applied plan",
+];
 
 export function Home() {
   return (
@@ -10,8 +19,15 @@ export function Home() {
       <header className={styles.masthead}>
         <div className="wrap">
           <span className="eyebrow">Platform Engineering — Internal Developer Platform</span>
+          <p className={styles.typingLine}>
+            <TypingText phrases={TAGLINES} />
+          </p>
           <h1 className={styles.h1}>
-            From nothing to a running service in <em>four minutes</em>.
+            From nothing to a running service in{" "}
+            <em className="glitch" data-text="four minutes">
+              four minutes
+            </em>
+            .
           </h1>
           <p className={styles.lede}>
             The paved road for services on this platform. You bring the code and the name of the
@@ -24,32 +40,38 @@ export function Home() {
 
       <GoldenPathRail />
 
-      <section className="section wrap">
-        <span className="eyebrow">What a team actually maintains</span>
-        <h2>The pipeline is a dependency, not a copy.</h2>
-        <p className="lede">
-          When the platform adds a scan or rotates a registry, every consuming repo picks it up on
-          the next run — instead of forty pull requests and a spreadsheet.
-        </p>
-        <BeforeAfterCompare />
-      </section>
+      <Reveal>
+        <section className="section wrap">
+          <span className="eyebrow">What a team actually maintains</span>
+          <h2>The pipeline is a dependency, not a copy.</h2>
+          <p className="lede">
+            When the platform adds a scan or rotates a registry, every consuming repo picks it up
+            on the next run — instead of forty pull requests and a spreadsheet.
+          </p>
+          <BeforeAfterCompare />
+        </section>
+      </Reveal>
 
-      <section className="section wrap">
-        <span className="eyebrow">What we measure</span>
-        <h2>Adoption is the only score that counts.</h2>
-        <p className="lede">
-          A platform nobody uses is a platform that failed, however good the engineering was.
-          These are the four numbers reviewed monthly with engineering leads — and the reason the
-          golden path has to stay genuinely easier than rolling your own.
-        </p>
-        <MetricsGrid />
-      </section>
+      <Reveal>
+        <section className="section wrap">
+          <span className="eyebrow">What we measure</span>
+          <h2>Adoption is the only score that counts.</h2>
+          <p className="lede">
+            A platform nobody uses is a platform that failed, however good the engineering was.
+            These are the four numbers reviewed monthly with engineering leads — and the reason
+            the golden path has to stay genuinely easier than rolling your own.
+          </p>
+          <MetricsGrid />
+        </section>
+      </Reveal>
 
-      <section className="section wrap">
-        <span className="eyebrow">Guardrails</span>
-        <h2>Enforced by default, not by review board.</h2>
-        <GuardrailsGrid />
-      </section>
+      <Reveal>
+        <section className="section wrap">
+          <span className="eyebrow">Guardrails</span>
+          <h2>Enforced by default, not by review board.</h2>
+          <GuardrailsGrid />
+        </section>
+      </Reveal>
 
       <footer className={`${styles.footer} wrap`}>
         Platform Engineering · Release &amp; Environments

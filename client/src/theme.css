@@ -1,42 +1,47 @@
-/* Ported verbatim from the original static portal/index.html so the new
-   app carries forward the same dark "editorial/terminal" design language. */
+/* Cyberpunk dark-tech identity: near-black canvas, neon cyan/purple/pink
+   accents, Orbitron/Rajdhani/JetBrains Mono/Inter type system. The custom
+   property *names* below (--brass, --teal, --alert, etc.) are inherited
+   from an earlier editorial brass/teal theme and now hold neon colors
+   instead — renaming ~150 call sites across every component for naming
+   purity isn't worth the regression risk; the values are what matter. */
 
 :root {
-  --base: #141f2e;
-  --raised: #1c2b3d;
-  --line: #2c3f55;
-  --paper: #dee7ef;
-  --muted: #7f94ab;
-  --brass: #d9a441;
-  --teal: #4fb3a5;
-  --alert: #e0685c;
+  --base: #050510;
+  --raised: #0a0a1e;
+  --line: #1c1c3d;
+  --paper: #e8f4fd;
+  --muted: #8892b0;
+  --brass: #00e5ff;
+  --teal: #9b59ff;
+  --alert: #ff2d78;
+  --neon-green: #00ff9d;
 
-  --display: "Bricolage Grotesque", system-ui, sans-serif;
-  --body: "IBM Plex Sans", system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --display: "Orbitron", "Rajdhani", system-ui, sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
 
   --gut: clamp(20px, 5vw, 64px);
 
   /* ---- gradient / glass / glow: layered on top of the flat canvas above,
      used on interactive surfaces (nav, buttons, cards, chat) rather than
      body text/backgrounds, so the base identity evolves instead of resets. */
-  --grad-brand: linear-gradient(135deg, #f0c674 0%, var(--brass) 55%, #b9812c 100%);
-  --grad-teal: linear-gradient(135deg, #7fd6c8 0%, var(--teal) 55%, #2f8a7d 100%);
+  --grad-brand: linear-gradient(135deg, #7deaff 0%, var(--brass) 55%, #0099b3 100%);
+  --grad-teal: linear-gradient(135deg, #c9a8ff 0%, var(--teal) 55%, #6a2fd9 100%);
   /* No opaque fill layer here deliberately — this is meant to sit on top
      of #root's own ambient blobs (below) and add to them, not occlude
      them. */
-  --grad-hero: radial-gradient(70% 60% at 15% 0%, rgba(217, 164, 65, 0.28), transparent 60%),
-    radial-gradient(60% 55% at 90% 10%, rgba(79, 179, 165, 0.24), transparent 60%);
+  --grad-hero: radial-gradient(70% 60% at 15% 0%, rgba(0, 229, 255, 0.28), transparent 60%),
+    radial-gradient(60% 55% at 90% 10%, rgba(155, 89, 255, 0.24), transparent 60%);
 
-  --glass-bg: rgba(28, 43, 61, 0.5);
-  --glass-border: rgba(222, 231, 239, 0.1);
+  --glass-bg: rgba(10, 10, 30, 0.5);
+  --glass-border: rgba(232, 244, 253, 0.1);
   --glass-blur: 18px;
 
-  --glow-brass: 0 0 0 1px rgba(217, 164, 65, 0.6), 0 0 32px rgba(217, 164, 65, 0.5);
-  --glow-teal: 0 0 0 1px rgba(79, 179, 165, 0.6), 0 0 32px rgba(79, 179, 165, 0.5);
-  --glow-alert: 0 0 0 1px rgba(224, 104, 92, 0.6), 0 0 32px rgba(224, 104, 92, 0.45);
-  --glow-brass-soft: 0 0 20px rgba(217, 164, 65, 0.25);
-  --glow-teal-soft: 0 0 20px rgba(79, 179, 165, 0.25);
+  --glow-brass: 0 0 0 1px rgba(0, 229, 255, 0.6), 0 0 32px rgba(0, 229, 255, 0.5);
+  --glow-teal: 0 0 0 1px rgba(155, 89, 255, 0.6), 0 0 32px rgba(155, 89, 255, 0.5);
+  --glow-alert: 0 0 0 1px rgba(255, 45, 120, 0.6), 0 0 32px rgba(255, 45, 120, 0.45);
+  --glow-brass-soft: 0 0 20px rgba(0, 229, 255, 0.25);
+  --glow-teal-soft: 0 0 20px rgba(155, 89, 255, 0.25);
 
   --radius-sm: 6px;
   --radius-md: 12px;
@@ -80,14 +85,14 @@ body {
 
 #root {
   position: relative;
-  background-image: radial-gradient(circle at 1px 1px, rgba(222, 231, 239, 0.07) 1px, transparent 0),
-    radial-gradient(1300px 800px at 8% 0%, rgba(217, 164, 65, 0.38), transparent 60%),
-    radial-gradient(1200px 900px at 95% 4%, rgba(79, 179, 165, 0.34), transparent 60%),
-    radial-gradient(1000px 700px at 5% 32%, rgba(79, 179, 165, 0.24), transparent 58%),
-    radial-gradient(1100px 800px at 98% 42%, rgba(217, 164, 65, 0.26), transparent 58%),
-    radial-gradient(1000px 700px at 8% 66%, rgba(217, 164, 65, 0.24), transparent 58%),
-    radial-gradient(1100px 800px at 95% 78%, rgba(79, 179, 165, 0.26), transparent 58%),
-    radial-gradient(1000px 700px at 15% 96%, rgba(79, 179, 165, 0.22), transparent 58%);
+  background-image: radial-gradient(circle at 1px 1px, rgba(232, 244, 253, 0.07) 1px, transparent 0),
+    radial-gradient(1300px 800px at 8% 0%, rgba(0, 229, 255, 0.38), transparent 60%),
+    radial-gradient(1200px 900px at 95% 4%, rgba(155, 89, 255, 0.34), transparent 60%),
+    radial-gradient(1000px 700px at 5% 32%, rgba(155, 89, 255, 0.24), transparent 58%),
+    radial-gradient(1100px 800px at 98% 42%, rgba(0, 229, 255, 0.26), transparent 58%),
+    radial-gradient(1000px 700px at 8% 66%, rgba(0, 229, 255, 0.24), transparent 58%),
+    radial-gradient(1100px 800px at 95% 78%, rgba(155, 89, 255, 0.26), transparent 58%),
+    radial-gradient(1000px 700px at 15% 96%, rgba(155, 89, 255, 0.22), transparent 58%);
   background-size: 26px 26px, auto, auto, auto, auto, auto, auto, auto;
   background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
 }
@@ -152,24 +157,24 @@ button {
 }
 .pill.ok {
   color: var(--teal);
-  border-color: rgba(79, 179, 165, 0.4);
-  background: rgba(79, 179, 165, 0.08);
+  border-color: rgba(155, 89, 255, 0.4);
+  background: rgba(155, 89, 255, 0.08);
 }
 .pill.ok:hover {
   box-shadow: var(--glow-teal);
 }
 .pill.warn {
   color: var(--brass);
-  border-color: rgba(217, 164, 65, 0.4);
-  background: rgba(217, 164, 65, 0.08);
+  border-color: rgba(0, 229, 255, 0.4);
+  background: rgba(0, 229, 255, 0.08);
 }
 .pill.warn:hover {
   box-shadow: var(--glow-brass);
 }
 .pill.off {
   color: var(--alert);
-  border-color: rgba(224, 104, 92, 0.4);
-  background: rgba(224, 104, 92, 0.08);
+  border-color: rgba(255, 45, 120, 0.4);
+  background: rgba(255, 45, 120, 0.08);
 }
 .pill.off:hover {
   box-shadow: var(--glow-alert);
@@ -190,11 +195,113 @@ button {
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 24px 48px -24px rgba(0, 0, 0, 0.65);
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--raised);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--brass);
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+/* Scroll-triggered reveal: elements start here, JS (useReveal) toggles
+   .revealed via IntersectionObserver when they enter the viewport. */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Glitch text accent — pass the same text via both the element's own
+   content and a data-text attribute; the two clipped copies jitter across
+   a narrow time window so it reads as a deliberate accent, not a constant
+   distraction. Reserved for a single hero word, not body copy. */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.glitch::before {
+  animation: glitchTop 6s infinite linear;
+  clip-path: polygon(0 0, 100% 0, 100% 42%, 0 42%);
+}
+.glitch::after {
+  animation: glitchBot 6s infinite linear;
+  clip-path: polygon(0 58%, 100% 58%, 100% 100%, 0 100%);
+}
+@keyframes glitchTop {
+  0%,
+  87%,
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  88%,
+  89% {
+    transform: translateX(-4px);
+    opacity: 0.8;
+  }
+  90%,
+  95% {
+    transform: translateX(4px);
+    opacity: 0.6;
+  }
+  96% {
+    transform: translateX(-2px);
+    opacity: 0.4;
+  }
+}
+@keyframes glitchBot {
+  0%,
+  91%,
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  92%,
+  93% {
+    transform: translateX(4px);
+    opacity: 0.7;
+  }
+  94%,
+  97% {
+    transform: translateX(-3px);
+    opacity: 0.5;
+  }
+  98% {
+    transform: translateX(2px);
+    opacity: 0.3;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

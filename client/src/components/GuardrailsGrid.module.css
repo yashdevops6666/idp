@@ -18,7 +18,7 @@
   right: 0;
   height: 3px;
   background: var(--grad-teal);
-  box-shadow: 0 0 12px rgba(79, 179, 165, 0.6);
+  box-shadow: 0 0 12px rgba(155, 89, 255, 0.6);
 }
 .guard:hover {
   transform: translateY(-3px);

@@ -2,8 +2,8 @@
   border-top: 1px solid var(--glass-border);
   border-bottom: 1px solid var(--glass-border);
   padding: clamp(36px, 5vw, 60px) 0;
-  background: linear-gradient(180deg, rgba(217, 164, 65, 0.06), transparent 40%),
-    linear-gradient(180deg, rgba(28, 43, 61, 0.55), transparent);
+  background: linear-gradient(180deg, rgba(0, 229, 255, 0.06), transparent 40%),
+    linear-gradient(180deg, rgba(10, 10, 30, 0.55), transparent);
 }
 
 .head {
@@ -64,7 +64,7 @@
   transition: background var(--dur-med) var(--ease-out);
 }
 .stop:hover {
-  background: rgba(217, 164, 65, 0.06);
+  background: rgba(0, 229, 255, 0.06);
 }
 
 .dot {

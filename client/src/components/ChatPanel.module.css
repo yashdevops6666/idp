@@ -42,11 +42,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(120% 100% at 0% 0%, rgba(217, 164, 65, 0.08), transparent 60%);
+  background: radial-gradient(120% 100% at 0% 0%, rgba(0, 229, 255, 0.08), transparent 60%);
   pointer-events: none;
 }
 .generalAccent .header::after {
-  background: radial-gradient(120% 100% at 0% 0%, rgba(79, 179, 165, 0.08), transparent 60%);
+  background: radial-gradient(120% 100% at 0% 0%, rgba(155, 89, 255, 0.08), transparent 60%);
 }
 
 .headAvatar {
@@ -164,7 +164,7 @@
 }
 
 .assistantBubble {
-  background: rgba(20, 31, 46, 0.6);
+  background: rgba(5, 5, 16, 0.6);
   border: 1px solid var(--glass-border);
   padding: 9px 13px;
   border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 2px;
