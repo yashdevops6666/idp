@@ -12,7 +12,6 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: var(--grad-hero);
 }
 
 .card {
@@ -61,6 +60,7 @@
   padding: 12px 16px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: var(--glow-brass-soft);
   transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .button:hover:not(:disabled) {

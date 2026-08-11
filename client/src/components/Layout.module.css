@@ -78,19 +78,42 @@
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--glow-brass-soft), 0 8px 24px rgba(0, 0, 0, 0.4);
   z-index: 20;
+  animation: fabPulse 3.5s ease-in-out infinite;
   transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .fab:hover {
-  transform: translateY(-2px) scale(1.04);
-  box-shadow: var(--glow-brass), 0 8px 24px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: var(--glow-brass), 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation-play-state: paused;
+}
+
+@keyframes fabPulse {
+  0%,
+  100% {
+    box-shadow: var(--glow-brass-soft), 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: var(--glow-brass), 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
 }
 
 .fabGeneral {
   right: 92px;
   background: var(--grad-teal);
+  animation-name: fabPulseTeal;
 }
 .fabGeneral:hover {
-  box-shadow: var(--glow-teal), 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--glow-teal), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes fabPulseTeal {
+  0%,
+  100% {
+    box-shadow: var(--glow-teal-soft), 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: var(--glow-teal), 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
 }

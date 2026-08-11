@@ -22,17 +22,21 @@
      body text/backgrounds, so the base identity evolves instead of resets. */
   --grad-brand: linear-gradient(135deg, #f0c674 0%, var(--brass) 55%, #b9812c 100%);
   --grad-teal: linear-gradient(135deg, #7fd6c8 0%, var(--teal) 55%, #2f8a7d 100%);
-  --grad-hero: radial-gradient(60% 50% at 15% 0%, rgba(217, 164, 65, 0.16), transparent 60%),
-    radial-gradient(50% 45% at 90% 10%, rgba(79, 179, 165, 0.14), transparent 60%),
-    var(--base);
+  /* No opaque fill layer here deliberately — this is meant to sit on top
+     of #root's own ambient blobs (below) and add to them, not occlude
+     them. */
+  --grad-hero: radial-gradient(70% 60% at 15% 0%, rgba(217, 164, 65, 0.28), transparent 60%),
+    radial-gradient(60% 55% at 90% 10%, rgba(79, 179, 165, 0.24), transparent 60%);
 
-  --glass-bg: rgba(28, 43, 61, 0.55);
-  --glass-border: rgba(222, 231, 239, 0.08);
-  --glass-blur: 16px;
+  --glass-bg: rgba(28, 43, 61, 0.5);
+  --glass-border: rgba(222, 231, 239, 0.1);
+  --glass-blur: 18px;
 
-  --glow-brass: 0 0 0 1px rgba(217, 164, 65, 0.5), 0 0 24px rgba(217, 164, 65, 0.35);
-  --glow-teal: 0 0 0 1px rgba(79, 179, 165, 0.5), 0 0 24px rgba(79, 179, 165, 0.35);
-  --glow-alert: 0 0 0 1px rgba(224, 104, 92, 0.5), 0 0 24px rgba(224, 104, 92, 0.3);
+  --glow-brass: 0 0 0 1px rgba(217, 164, 65, 0.6), 0 0 32px rgba(217, 164, 65, 0.5);
+  --glow-teal: 0 0 0 1px rgba(79, 179, 165, 0.6), 0 0 32px rgba(79, 179, 165, 0.5);
+  --glow-alert: 0 0 0 1px rgba(224, 104, 92, 0.6), 0 0 32px rgba(224, 104, 92, 0.45);
+  --glow-brass-soft: 0 0 20px rgba(217, 164, 65, 0.25);
+  --glow-teal-soft: 0 0 20px rgba(79, 179, 165, 0.25);
 
   --radius-sm: 6px;
   --radius-md: 12px;
@@ -51,12 +55,20 @@
   padding: 0;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
+/* Deliberately no height:100% on html/body/#root: with explicit height set,
+   overflowing content paints beyond the box but the box's own height stays
+   pinned to the constraint — which silently caps #root's ambient
+   background (below) to one viewport-height's worth of the page. Nothing
+   else needs this; full-height screens (AuthGate, Layout) already use
+   min-height:100vh independently, which has no such ceiling. */
 
+/* Persistent ambient background — colour blobs spread down the *document*
+   (not the viewport) so they reach every section, not just whatever's in
+   the first screenful. Deliberately NOT background-attachment:fixed: fixed
+   backgrounds are positioned relative to the viewport, so on a page this
+   long most of the blobs would never appear as you scroll — this needed
+   to be on #root (which grows to the full document height) with normal
+   attachment so the percentages resolve against real content height. */
 body {
   background: var(--base);
   color: var(--paper);
@@ -64,6 +76,20 @@ body {
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  position: relative;
+  background-image: radial-gradient(circle at 1px 1px, rgba(222, 231, 239, 0.07) 1px, transparent 0),
+    radial-gradient(1300px 800px at 8% 0%, rgba(217, 164, 65, 0.38), transparent 60%),
+    radial-gradient(1200px 900px at 95% 4%, rgba(79, 179, 165, 0.34), transparent 60%),
+    radial-gradient(1000px 700px at 5% 32%, rgba(79, 179, 165, 0.24), transparent 58%),
+    radial-gradient(1100px 800px at 98% 42%, rgba(217, 164, 65, 0.26), transparent 58%),
+    radial-gradient(1000px 700px at 8% 66%, rgba(217, 164, 65, 0.24), transparent 58%),
+    radial-gradient(1100px 800px at 95% 78%, rgba(79, 179, 165, 0.26), transparent 58%),
+    radial-gradient(1000px 700px at 15% 96%, rgba(79, 179, 165, 0.22), transparent 58%);
+  background-size: 26px 26px, auto, auto, auto, auto, auto, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
 }
 
 a {
@@ -97,7 +123,8 @@ button {
 
 .section {
   padding: clamp(52px, 7vw, 88px) 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--glass-border) 15%, var(--glass-border) 85%, transparent) 1;
 }
 .section h2 {
   font-family: var(--display);
@@ -149,13 +176,18 @@ button {
 }
 
 /* Reusable frosted-glass surface — one recipe every component opts into
-   instead of repeating background/backdrop-filter/border by hand. */
+   instead of repeating background/backdrop-filter/border by hand.
+   saturate() alongside blur() is what makes the ambient background blobs
+   read as vivid colour through the glass rather than a grey smear —
+   plain blur() alone is much subtler. The inset top highlight plus a real
+   drop shadow reads as an elevated card even where blur support varies. */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 24px 48px -24px rgba(0, 0, 0, 0.65);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -46,6 +46,7 @@
   padding: 12px 22px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: var(--glow-brass-soft);
   transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .submit:hover:not(:disabled) {
