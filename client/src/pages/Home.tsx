@@ -1,6 +1,6 @@
 import { GoldenPathRail } from "../components/GoldenPathRail";
 import { BeforeAfterCompare } from "../components/BeforeAfterCompare";
-import { MetricsGrid } from "../components/MetricsGrid";
+import { CoreComponentsGrid } from "../components/CoreComponentsGrid";
 import { GuardrailsGrid } from "../components/GuardrailsGrid";
 import { Reveal } from "../components/effects/Reveal";
 import { TypingText } from "../components/effects/TypingText";
@@ -54,14 +54,15 @@ export function Home() {
 
       <Reveal>
         <section className="section wrap">
-          <span className="eyebrow">What we measure</span>
-          <h2>Adoption is the only score that counts.</h2>
+          <span className="eyebrow">The platform, broken down</span>
+          <h2>Every IDP is built from five parts.</h2>
           <p className="lede">
-            A platform nobody uses is a platform that failed, however good the engineering was.
-            These are the four numbers reviewed monthly with engineering leads — and the reason
-            the golden path has to stay genuinely easier than rolling your own.
+            Application configuration, infrastructure, environments, deployments and
+            access control — glued together so developers get self-service without the
+            cognitive load of owning each piece themselves. This is what this platform
+            covers end to end.
           </p>
-          <MetricsGrid />
+          <CoreComponentsGrid />
         </section>
       </Reveal>
 
