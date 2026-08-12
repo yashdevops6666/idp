@@ -6,6 +6,7 @@ import { env } from "../config/env.js";
 import type { ScaffoldRequest, ScaffoldStep } from "../types.js";
 
 type UnorderedStep = Omit<ScaffoldStep, "order">;
+type OnStep = (step: UnorderedStep) => void;
 
 export interface RealRepoResult {
   steps: UnorderedStep[];
@@ -18,7 +19,13 @@ export interface RealRepoResult {
 // catalogue entry -> protect the branch. Protecting before the commit
 // would need enforce_admins-bypass semantics to land the commit at all;
 // this order avoids relying on that.
-export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoResult> {
+//
+// `onStep`, if given, fires the instant each step actually completes (not
+// buffered until the whole function returns) — this is what lets the
+// scaffold route stream genuine progress for the real path: each callback
+// here corresponds to a real network round-trip that just finished, not an
+// artificially paced UI reveal like the simulated path uses.
+export async function createRealRepo(input: ScaffoldRequest, onStep?: OnStep): Promise<RealRepoResult> {
   if (!env.github) {
     throw new Error("createRealRepo() called without GITHUB_PAT configured.");
   }
@@ -29,10 +36,15 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
   const steps: UnorderedStep[] = [];
   let repoUrl: string | null = null;
 
+  function pushStep(step: UnorderedStep) {
+    steps.push(step);
+    onStep?.(step);
+  }
+
   // 1. Availability check — fail before creating anything if it exists.
   try {
     await octokit.repos.get({ owner, repo: name });
-    steps.push({
+    pushStep({
       label: "Create repository",
       command: `POST /user/repos { name: "${name}" }`,
       description: `${owner}/${name} already exists on GitHub. Pick another name.`,
@@ -44,7 +56,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
   } catch (err) {
     const mapped = mapOctokitError(err);
     if (mapped.status !== 404) {
-      steps.push({
+      pushStep({
         label: "Create repository",
         command: `GET /repos/${owner}/${name}`,
         description: "Could not check whether the repository name is available on GitHub.",
@@ -67,7 +79,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
       auto_init: true,
     });
     repoUrl = res.data.html_url;
-    steps.push({
+    pushStep({
       label: "Create repository",
       command: `POST /user/repos { name: "${name}", private: ${visibility === "private"} }`,
       description: `Repository created at ${repoUrl}. runtime=${input.runtime} lifecycle=${input.lifecycle}`,
@@ -77,7 +89,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
     });
   } catch (err) {
     const mapped = mapOctokitError(err);
-    steps.push({
+    pushStep({
       label: "Create repository",
       command: `POST /user/repos { name: "${name}" }`,
       description: "Repository creation failed.",
@@ -90,7 +102,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
 
   // Team access has no equivalent on a personal account (no Teams API) —
   // shown but explicitly marked not applicable rather than faked as real.
-  steps.push({
+  pushStep({
     label: "Grant team access",
     command: "(not applicable)",
     description:
@@ -109,7 +121,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
       message: "Add catalogue entry",
       content: Buffer.from(catalogYaml, "utf-8").toString("base64"),
     });
-    steps.push({
+    pushStep({
       label: "Register in the catalogue",
       command: `PUT /repos/${owner}/${name}/contents/catalog-info.yaml`,
       description: "catalog-info.yaml committed to main. The CI workflow refuses to build without it.",
@@ -119,7 +131,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
     });
   } catch (err) {
     const mapped = mapOctokitError(err);
-    steps.push({
+    pushStep({
       label: "Register in the catalogue",
       command: `PUT /repos/${owner}/${name}/contents/catalog-info.yaml`,
       description:
@@ -147,7 +159,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
       restrictions: null,
       required_linear_history: branchProtection.required_linear_history ?? true,
     } as Parameters<typeof octokit.repos.updateBranchProtection>[0]);
-    steps.push({
+    pushStep({
       label: "Apply branch protection",
       command: `PUT /repos/${owner}/${name}/branches/main/protection`,
       description:
@@ -157,7 +169,7 @@ export async function createRealRepo(input: ScaffoldRequest): Promise<RealRepoRe
     });
   } catch (err) {
     const mapped = mapOctokitError(err);
-    steps.push({
+    pushStep({
       label: "Apply branch protection",
       command: `PUT /repos/${owner}/${name}/branches/main/protection`,
       description:

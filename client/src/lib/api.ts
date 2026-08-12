@@ -7,6 +7,7 @@ import type {
   ScaffoldConfig,
   ScaffoldRequest,
   ScaffoldResponse,
+  ScaffoldStep,
   Service,
 } from "../types";
 
@@ -48,8 +49,64 @@ export const api = {
   goldenPath: () => request<GoldenPathStop[]>("/golden-path"),
 
   scaffoldConfig: () => request<ScaffoldConfig>("/scaffold/config"),
-  scaffold: (input: ScaffoldRequest) =>
-    request<ScaffoldResponse>("/scaffold", { method: "POST", body: JSON.stringify(input) }),
+
+  // Streams newline-delimited JSON step events as the server produces
+  // them (paced for the simulated path, genuinely as-they-happen for the
+  // real GitHub path), resolving with the final result once a "done" line
+  // arrives. Same fetch-stream-reader shape as chatStream below.
+  async scaffoldStream(input: ScaffoldRequest, onStep: (step: ScaffoldStep) => void): Promise<ScaffoldResponse> {
+    const res = await fetch("/api/scaffold", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok || !res.body) {
+      let msg = res.statusText;
+      try {
+        const body = await res.json();
+        if (body?.error) msg = body.error;
+      } catch {
+        // ignore
+      }
+      throw new ApiError(res.status, msg);
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let done = false;
+    let result: ScaffoldResponse | null = null;
+
+    while (!done) {
+      const chunk = await reader.read();
+      done = chunk.done;
+      if (chunk.value) buffer += decoder.decode(chunk.value, { stream: true });
+
+      let newlineIndex: number;
+      while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+        const line = buffer.slice(0, newlineIndex).trim();
+        buffer = buffer.slice(newlineIndex + 1);
+        if (!line) continue;
+
+        const msg = JSON.parse(line) as
+          | { type: "step"; step: ScaffoldStep }
+          | { type: "done"; service: Service; catalogInfoYaml: string; mode: "simulated" | "real" }
+          | { type: "error"; error: string };
+
+        if (msg.type === "step") {
+          onStep(msg.step);
+        } else if (msg.type === "done") {
+          result = { steps: [], catalogInfoYaml: msg.catalogInfoYaml, service: msg.service, mode: msg.mode };
+        } else if (msg.type === "error") {
+          throw new ApiError(502, msg.error);
+        }
+      }
+    }
+
+    if (!result) throw new ApiError(502, "The scaffold stream ended unexpectedly.");
+    return result;
+  },
 
   async chatStream(
     message: string,

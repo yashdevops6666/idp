@@ -1,0 +1,63 @@
+.stack {
+  position: fixed;
+  top: 84px;
+  right: 24px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(340px, calc(100vw - 48px));
+}
+
+.toast {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border-top: 2px solid var(--brass);
+  animation: slideIn var(--dur-med) var(--ease-out);
+}
+
+.toast.real {
+  border-top-color: var(--alert);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass);
+  flex-shrink: 0;
+  animation: pulseDot 1.5s ease infinite;
+}
+.toast.real .dot {
+  background: var(--alert);
+  box-shadow: 0 0 8px var(--alert);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.7);
+  }
+}

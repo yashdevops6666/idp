@@ -8,6 +8,7 @@ import { authRouter } from "./routes/auth.js";
 import { catalogueRouter } from "./routes/catalogue.js";
 import { scaffoldRouter } from "./routes/scaffold.js";
 import { chatRouter } from "./routes/chat.js";
+import { eventsRouter } from "./routes/events.js";
 import { requireAuth } from "./middleware/auth.js";
 import { digest } from "./grounding/buildDigest.js";
 
@@ -45,6 +46,7 @@ api.use(authRouter);
 api.use(requireAuth, catalogueRouter);
 api.use(requireAuth, scaffoldRouter);
 api.use(requireAuth, chatRouter);
+api.use(requireAuth, eventsRouter);
 app.use("/api", api);
 
 if (isProduction) {

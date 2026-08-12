@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { addScaffoldedService, getCatalogue } from "../lib/dataStore.js";
+import { broadcast } from "../lib/eventBus.js";
 import { buildScaffoldPlan } from "../scaffold/simulate.js";
 import { buildRealScaffoldPlan } from "../scaffold/real.js";
 import { SERVICE_NAME_PATTERN_SOURCE, validateServiceName } from "../scaffold/validation.js";
@@ -12,6 +13,9 @@ export const scaffoldRouter = Router();
 
 const RUNTIMES: Runtime[] = ["python", "dotnet", "node"];
 const LIFECYCLES: Lifecycle[] = ["experimental", "production", "deprecated"];
+const SIMULATED_STEP_PACING_MS = 220;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 scaffoldRouter.get("/scaffold/config", (_req, res) => {
   const config: ScaffoldConfig = {
@@ -24,6 +28,14 @@ scaffoldRouter.get("/scaffold/config", (_req, res) => {
   res.json(config);
 });
 
+// Streams newline-delimited JSON ({"type":"step",...} lines, then one
+// {"type":"done",...} or {"type":"error",...}) instead of one big JSON
+// response — same fetch-stream-reader pattern the client already uses for
+// /api/chat. The real path's steps are genuinely paced by real GitHub API
+// round-trips (via createRealRepo's onStep callback); the simulated path
+// has no real async work to wait on, so it's paced artificially at a
+// fixed interval purely for UI readability — steps arriving all at once
+// are harder to read than steps arriving one at a time.
 scaffoldRouter.post("/scaffold", attachSessionKey, scaffoldRealLimiter, async (req, res) => {
   const body = req.body as Partial<ScaffoldRequest> | undefined;
   const { name, owner, system, costCentre, runtime, lifecycle, real, visibility } = body ?? {};
@@ -74,12 +86,46 @@ scaffoldRouter.post("/scaffold", attachSessionKey, scaffoldRealLimiter, async (r
     visibility: visibility === "public" ? "public" : "private",
   };
 
+  res.setHeader("Content-Type", "application/x-ndjson; charset=utf-8");
+  res.setHeader("X-Accel-Buffering", "no");
+  res.flushHeaders();
+
+  let ended = false;
+  const write = (obj: unknown) => {
+    if (ended) return;
+    res.write(`${JSON.stringify(obj)}\n`);
+  };
+  const finish = () => {
+    if (ended) return;
+    ended = true;
+    res.end();
+  };
+
   try {
-    const plan = real ? await buildRealScaffoldPlan(input) : buildScaffoldPlan(input);
-    addScaffoldedService(plan.service);
-    res.json(plan);
+    let order = 0;
+
+    if (real) {
+      const plan = await buildRealScaffoldPlan(input, (step) => {
+        write({ type: "step", step: { ...step, order: order++ } });
+      });
+      addScaffoldedService(plan.service);
+      broadcast({ type: "service.created", service: plan.service, mode: plan.mode });
+      write({ type: "done", service: plan.service, catalogInfoYaml: plan.catalogInfoYaml, mode: plan.mode });
+    } else {
+      const plan = buildScaffoldPlan(input);
+      for (const step of plan.steps) {
+        write({ type: "step", step });
+        await sleep(SIMULATED_STEP_PACING_MS);
+      }
+      addScaffoldedService(plan.service);
+      broadcast({ type: "service.created", service: plan.service, mode: plan.mode });
+      write({ type: "done", service: plan.service, catalogInfoYaml: plan.catalogInfoYaml, mode: plan.mode });
+    }
+
+    finish();
   } catch (err) {
-    console.error("[scaffold] real creation failed unexpectedly", err);
-    res.status(502).json({ error: "Real repo creation failed unexpectedly. Nothing was added to the catalogue." });
+    console.error("[scaffold] failed", err);
+    write({ type: "error", error: "Something went wrong creating the service. Nothing was added to the catalogue." });
+    finish();
   }
 });

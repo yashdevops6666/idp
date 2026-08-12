@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { api } from "../lib/api";
 import { ChatPanel } from "./ChatPanel";
+import { LiveToasts } from "./LiveToasts";
 import type { ChatMode } from "../types";
 import styles from "./Layout.module.css";
 
@@ -34,6 +35,8 @@ export function Layout() {
           Sign out
         </button>
       </nav>
+
+      <LiveToasts />
 
       <main>
         <Outlet />

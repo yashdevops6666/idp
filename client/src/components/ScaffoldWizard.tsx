@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
-import type { Lifecycle, Runtime, ScaffoldConfig, ScaffoldResponse } from "../types";
+import type { Lifecycle, Runtime, ScaffoldConfig, ScaffoldStep, Service } from "../types";
 import { SimulationLog } from "./SimulationLog";
 import styles from "./ScaffoldWizard.module.css";
 
@@ -14,10 +14,17 @@ const initialForm = {
   lifecycle: "experimental" as Lifecycle,
 };
 
+interface FinalResult {
+  service: Service;
+  catalogInfoYaml: string;
+  mode: "simulated" | "real";
+}
+
 export function ScaffoldWizard() {
   const [form, setForm] = useState(initialForm);
   const [config, setConfig] = useState<ScaffoldConfig | null>(null);
-  const [result, setResult] = useState<ScaffoldResponse | null>(null);
+  const [liveSteps, setLiveSteps] = useState<ScaffoldStep[]>([]);
+  const [result, setResult] = useState<FinalResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -38,9 +45,12 @@ export function ScaffoldWizard() {
     setSubmitting(true);
     setError(null);
     setResult(null);
+    setLiveSteps([]);
     try {
-      const res = await api.scaffold({ ...form, real, visibility });
-      setResult(res);
+      const res = await api.scaffoldStream({ ...form, real, visibility }, (step) => {
+        setLiveSteps((prev) => [...prev, step]);
+      });
+      setResult({ service: res.service, catalogInfoYaml: res.catalogInfoYaml, mode: res.mode });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong.");
     } finally {
@@ -51,9 +61,25 @@ export function ScaffoldWizard() {
   function reset() {
     setForm(initialForm);
     setResult(null);
+    setLiveSteps([]);
     setError(null);
     setReal(false);
     setConfirmName("");
+  }
+
+  // Live-streaming view: the request is in flight, steps are arriving one
+  // at a time. Shown instead of the form until it either finishes (result)
+  // or fails (error, back to the form).
+  if (submitting || (liveSteps.length > 0 && !result && !error)) {
+    return (
+      <div>
+        <p className={styles.success}>
+          <span className={styles.liveDot} />
+          {real ? "Creating on GitHub…" : "Provisioning (simulated)…"}
+        </p>
+        <SimulationLog steps={liveSteps} />
+      </div>
+    );
   }
 
   if (result) {
@@ -71,7 +97,7 @@ export function ScaffoldWizard() {
             </>
           )}
         </p>
-        <SimulationLog steps={result.steps} />
+        <SimulationLog steps={liveSteps} />
 
         <div className={`${styles.yamlPane} glass`}>
           <header>catalog-info.yaml</header>
