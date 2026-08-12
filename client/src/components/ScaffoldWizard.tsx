@@ -130,7 +130,7 @@ export function ScaffoldWizard() {
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="pricing-feed"
+            placeholder="notification-worker"
           />
         </label>
         <label className={styles.field}>
@@ -139,7 +139,7 @@ export function ScaffoldWizard() {
             required
             value={form.owner}
             onChange={(e) => setForm({ ...form, owner: e.target.value })}
-            placeholder="team-market-data"
+            placeholder="team-platform"
           />
         </label>
         <label className={styles.field}>
@@ -148,7 +148,7 @@ export function ScaffoldWizard() {
             required
             value={form.system}
             onChange={(e) => setForm({ ...form, system: e.target.value })}
-            placeholder="Pricing & Market Data"
+            placeholder="Core Platform"
           />
         </label>
         <label className={styles.field}>
@@ -157,7 +157,7 @@ export function ScaffoldWizard() {
             required
             value={form.costCentre}
             onChange={(e) => setForm({ ...form, costCentre: e.target.value })}
-            placeholder="MD-1042"
+            placeholder="PLAT-1001"
           />
         </label>
         <label className={styles.field}>

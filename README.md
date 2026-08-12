@@ -51,10 +51,10 @@ paved road because it is genuinely easier than rolling their own.
 ```bash
 # See the whole provisioning journey without touching GitHub or Azure
 ./scripts/new-service.sh \
-  --name pricing-feed \
-  --owner team-market-data \
-  --system aladdin-data \
-  --cost-centre EQ-4471 \
+  --name notification-worker \
+  --owner team-platform \
+  --system core-platform \
+  --cost-centre PLAT-1001 \
   --dry-run
 
 # The portal

@@ -6,7 +6,7 @@
 #     ci:
 #       uses: jhi-platform/idp/.github/workflows/reusable-service-ci.yml@v1
 #       with:
-#         service-name: pricing-feed
+#         service-name: notification-worker
 #       secrets: inherit
 #
 # Everything below is owned by Platform Engineering. When we add a scan,

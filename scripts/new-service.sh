@@ -2,8 +2,8 @@
 #
 # new-service — create a service on the golden path.
 #
-#   ./scripts/new-service.sh --name pricing-feed --owner team-market-data \
-#                            --system aladdin-data --cost-centre EQ-4471
+#   ./scripts/new-service.sh --name notification-worker --owner team-platform \
+#                            --system core-platform --cost-centre PLAT-1001
 #
 # What you get: a repo from the template, branch protection, environments
 # with the right approvers, OIDC federation to Azure, a catalogue entry,
