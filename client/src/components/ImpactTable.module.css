@@ -1,0 +1,52 @@
+.tableCard {
+  margin-top: 30px;
+  padding: 6px var(--gut-inner, 8px);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--glass-border);
+  white-space: nowrap;
+}
+.table th:not(:first-child) {
+  text-align: right;
+}
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(232, 244, 253, 0.05);
+  vertical-align: middle;
+}
+.row {
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.row:hover {
+  background: rgba(0, 229, 255, 0.06);
+}
+.name {
+  color: var(--paper);
+}
+.num {
+  font-family: var(--mono);
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (max-width: 880px) {
+  .table {
+    min-width: 560px;
+  }
+}
